@@ -1,0 +1,585 @@
+﻿<Window x:Class="WpfApp2Practice1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp2Practice1"
+        mc:Ignorable="d"
+        x:Name="window"
+        xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+        Title="学生成绩管理系统" Height="540" Width="960" Icon="/WpfApp2Practice1;component/Image/science.jpg">
+    <Window.Resources>
+        <CollectionViewSource Source="{Binding ElementName=window, Path=studentsList}" x:Key="studentsListViewSource" Filter="CollectionViewSource_Filter" >
+            <CollectionViewSource.SortDescriptions>
+                <scm:SortDescription Direction="Descending" PropertyName="Sumscore" />
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
+    </Window.Resources>
+    <Grid>
+        <Grid Name="MainMenu">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Column="1" FontSize="35" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,40">学生成绩管理系统</TextBlock>
+            <Border BorderThickness="2" Grid.Column="1" Grid.Row="1" BorderBrush="AliceBlue">
+                <StackPanel>
+                    <StackPanel.Resources>
+                        <Style TargetType="Button">
+                            <Setter Property="BorderThickness" Value="0" />
+                            <Setter Property="Margin" Value="0,5,0,0" />
+                            <Setter Property="HorizontalAlignment" Value="Center" />
+                            <Setter Property="Width" Value="150" />
+                            <Setter Property="Height" Value="25" />
+                            <Setter Property="Background" Value="White" />
+                        </Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FontSize" Value="15" />
+                            <Setter Property="Foreground" Value="Black" />
+                        </Style>
+                    </StackPanel.Resources>
+                    <Border BorderBrush="AliceBlue" />
+                    <Button Name="btnMainAdd" Click="MainMenu_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/WpfApp2Practice1;component/Image/write.jpg" Width="16" Height="16" Margin="10,0"/>
+                            <TextBlock>添加学生信息</TextBlock>
+                        </StackPanel>
+                    </Button>
+                    <Button Name="btnMainShow" Click="MainMenu_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/WpfApp2Practice1;component/Image/food.jpg" Width="16" Height="16" Margin="10,0"/>
+                            <TextBlock>显示学生信息</TextBlock>
+                        </StackPanel>
+                    </Button>
+                    <Button Name="btnMainRead" Click="MainMenu_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/WpfApp2Practice1;component/Image/steam.jpg" Width="16" Height="16" Margin="10,0"/>
+                            <TextBlock>读取学生信息</TextBlock>
+                        </StackPanel>
+                    </Button>
+                    <Button Name="btnMainTotal" Click="MainMenu_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/WpfApp2Practice1;component/Image/light.jpg" Width="16" Height="16" Margin="10,0"/>
+                            <TextBlock>数据总体分析</TextBlock>
+                        </StackPanel>
+                    </Button>
+                    <Button Name="btnMainFind" Click="MainMenu_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/WpfApp2Practice1;component/Image/search.jpg" Width="16" Height="16" Margin="10,0"/>
+                            <TextBlock>查找学生信息</TextBlock>
+                        </StackPanel>
+                    </Button>
+                    <Button Name="btnMainModification" Click="MainMenu_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/WpfApp2Practice1;component/Image/change.jpg" Width="16" Height="16" Margin="10,0"/>
+                            <TextBlock>修改学生信息</TextBlock>
+                        </StackPanel>
+                    </Button>
+                    <Button Name="btnMainDelete" Click="MainMenu_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/WpfApp2Practice1;component/Image/delete.jpg" Width="16" Height="16" Margin="10,0"/>
+                            <TextBlock>删除学生信息</TextBlock>
+                        </StackPanel>
+                    </Button>
+                    <Button Name="btnMainExit" Click="MainMenu_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/WpfApp2Practice1;component/Image/return.jpg" Width="16" Height="16" Margin="10,0"/>
+                            <TextBlock>退出学生系统</TextBlock>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Border>
+            <TextBlock Grid.Row="2" Grid.Column="2" FontSize="14" FontStyle="Italic" Foreground="Silver" HorizontalAlignment="Center" Margin="0,10">版本：1.0.0.0   设计者：あなたが好きです</TextBlock>
+        </Grid>
+        <DockPanel Name="pnlStudentList" Visibility="Collapsed" Panel.ZIndex="1">
+            <Menu DockPanel.Dock="Top">
+                <MenuItem Header="_Add" Click="Top_Click">
+                    <MenuItem.ToolTip>
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <Image Source="/WpfApp2Practice1;component/Image/write.jpg" Width="16" Height="16" Margin="0,0,5,0"/>
+                                <TextBlock FontWeight="Bold" FontSize="14">添加学生信息</TextBlock>
+                            </StackPanel>
+                            <TextBlock>
+                                请按照要求填写信息，系统将自动根据总分大小将学生信息降次排序
+                                <LineBreak />
+                                排序可能会出现少量错误，您可以使用"Refresh"进行刷新显示
+                            </TextBlock>
+                            <Border BorderBrush="Silver" BorderThickness="0,1,0,0" Margin="0,8" />
+                            <WrapPanel>
+                                <Image Source="/WpfApp2Practice1;component/Image/help.jpg" Width="16" Height="16" Margin="0,0,5,0" />
+                                <TextBlock FontStyle="Italic">Press F1 for more help(还没做呢)</TextBlock>
+                            </WrapPanel>
+                        </StackPanel>
+                    </MenuItem.ToolTip>
+                </MenuItem>
+                <MenuItem Header="_Refresh" Click="Top_Click">
+                    <MenuItem.ToolTip>
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <Image Source="/WpfApp2Practice1;component/Image/food.jpg" Width="16" Height="16" Margin="0,0,5,0"/>
+                                <TextBlock FontWeight="Bold" FontSize="14">刷新学生信息</TextBlock>
+                            </StackPanel>
+                            <TextBlock>
+                                系统将刷新学生列表
+                                <LineBreak />
+                                可处理少量显示错误，如仍出现异常，请报告给开发者（联系方式见“拓展”），感谢
+                            </TextBlock>
+                            <Border BorderBrush="Silver" BorderThickness="0,1,0,0" Margin="0,8" />
+                            <WrapPanel>
+                                <Image Source="/WpfApp2Practice1;component/Image/help.jpg" Width="16" Height="16" Margin="0,0,5,0" />
+                                <TextBlock FontStyle="Italic">Press F1 for more help(还没做呢)</TextBlock>
+                            </WrapPanel>
+                        </StackPanel>
+                    </MenuItem.ToolTip>
+                </MenuItem>
+                <MenuItem Header="S_ave" Click="Top_Click">
+                    <MenuItem.ToolTip>
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <Image Source="/WpfApp2Practice1;component/Image/save.jpg" Width="16" Height="16" Margin="0,0,5,0"/>
+                                <TextBlock FontWeight="Bold" FontSize="14">保存学生信息</TextBlock>
+                            </StackPanel>
+                            <TextBlock>
+                                该操作将保存此刻的列表信息到本地文件，相对路径:
+                                <LineBreak />
+                                \WpfApp2Practice1\bin\Debug\student_Score_Manager_List.xml(客户端的相对路径可能无法找到)
+                            </TextBlock>
+                            <Border BorderBrush="Silver" BorderThickness="0,1,0,0" Margin="0,8" />
+                            <WrapPanel>
+                                <Image Source="/WpfApp2Practice1;component/Image/help.jpg" Width="16" Height="16" Margin="0,0,5,0" />
+                                <TextBlock FontStyle="Italic">Press F1 for more help(还没做呢)</TextBlock>
+                            </WrapPanel>
+                        </StackPanel>
+                    </MenuItem.ToolTip>
+                </MenuItem>
+                <MenuItem Header="_Read" Click="Top_Click">
+                    <MenuItem.ToolTip>
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <Image Source="/WpfApp2Practice1;component/Image/steam.jpg" Width="16" Height="16" Margin="0,0,5,0"/>
+                                <TextBlock FontWeight="Bold" FontSize="14">读取文件</TextBlock>
+                            </StackPanel>
+                            <TextBlock>
+                                读取本地文件，如果成功信息将显示在列表中
+                                <LineBreak />
+                                用户打开资源管理器读取文件暂时还没做
+                            </TextBlock>
+                            <Border BorderBrush="Silver" BorderThickness="0,1,0,0" Margin="0,8" />
+                            <WrapPanel>
+                                <Image Source="/WpfApp2Practice1;component/Image/help.jpg" Width="16" Height="16" Margin="0,0,5,0" />
+                                <TextBlock FontStyle="Italic">Press F1 for more help(还没做呢)</TextBlock>
+                            </WrapPanel>
+                        </StackPanel>
+                    </MenuItem.ToolTip>
+                </MenuItem>
+                <MenuItem Header="_Total" Click="Top_Click">
+                    <MenuItem.ToolTip>
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <Image Source="/WpfApp2Practice1;component/Image/light.jpg" Width="16" Height="16" Margin="0,0,5,0"/>
+                                <TextBlock FontWeight="Bold" FontSize="14">数据总体分析</TextBlock>
+                            </StackPanel>
+                            <TextBlock>
+                                系统将根据所有学生的成绩分析结果，只具有一定参考价值
+                                <LineBreak />
+                                就几个平均数好像也没啥参考价值……
+                            </TextBlock>
+                            <Border BorderBrush="Silver" BorderThickness="0,1,0,0" Margin="0,8" />
+                            <WrapPanel>
+                                <Image Source="/WpfApp2Practice1;component/Image/help.jpg" Width="16" Height="16" Margin="0,0,5,0" />
+                                <TextBlock FontStyle="Italic">Press F1 for more help(还没做呢)</TextBlock>
+                            </WrapPanel>
+                        </StackPanel>
+                    </MenuItem.ToolTip>
+                </MenuItem>
+                <MenuItem Header="_Find" Click="Top_Click">
+                    <MenuItem.ToolTip>
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <Image Source="/WpfApp2Practice1;component/Image/search.jpg" Width="16" Height="16" Margin="0,0,5,0"/>
+                                <TextBlock FontWeight="Bold" FontSize="14">查找学生信息</TextBlock>
+                            </StackPanel>
+                            <TextBlock>
+                                点击后你将看到一个输入框，通过学生姓名可进行筛选操作，再次点击将隐藏输入框
+                                <LineBreak />
+                                用学号应该更好可以避免重复数据，但是我也没检查重复数据，这就尴尬了
+                            </TextBlock>
+                            <Border BorderBrush="Silver" BorderThickness="0,1,0,0" Margin="0,8" />
+                            <WrapPanel>
+                                <Image Source="/WpfApp2Practice1;component/Image/help.jpg" Width="16" Height="16" Margin="0,0,5,0" />
+                                <TextBlock FontStyle="Italic">Press F1 for more help(还没做呢)</TextBlock>
+                            </WrapPanel>
+                        </StackPanel>
+                    </MenuItem.ToolTip>
+                </MenuItem>
+                <MenuItem Header="_Modification" Click="Top_Click">
+                    <MenuItem.ToolTip>
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <Image Source="/WpfApp2Practice1;component/Image/change.jpg" Width="16" Height="16" Margin="0,0,5,0"/>
+                                <TextBlock FontWeight="Bold" FontSize="14">修改学生信息</TextBlock>
+                            </StackPanel>
+                            <TextBlock>
+                                请先在下方列表中选择一个学生的信息，然后点击此工具，你将得到一个类似添加学生的面板，进行修改操作
+                                <LineBreak />
+                                如系统出现异常，请报告给开发者（联系方式见“拓展”），感谢
+                            </TextBlock>
+                            <Border BorderBrush="Silver" BorderThickness="0,1,0,0" Margin="0,8" />
+                            <WrapPanel>
+                                <Image Source="/WpfApp2Practice1;component/Image/help.jpg" Width="16" Height="16" Margin="0,0,5,0" />
+                                <TextBlock FontStyle="Italic">Press F1 for more help(还没做呢)</TextBlock>
+                            </WrapPanel>
+                        </StackPanel>
+                    </MenuItem.ToolTip>
+                </MenuItem>
+                <MenuItem Header="_Delete" Click="Top_Click">
+                    <MenuItem.ToolTip>
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <Image Source="/WpfApp2Practice1;component/Image/delete.jpg" Width="16" Height="16" Margin="0,0,5,0"/>
+                                <TextBlock FontWeight="Bold" FontSize="14">删除学生信息</TextBlock>
+                            </StackPanel>
+                            <TextBlock>
+                                选中下方列表中的某一项，执行删除操作，暂时不可逆
+                                <LineBreak />
+                                如系统出现异常，请报告给开发者（联系方式见“拓展”），感谢
+                            </TextBlock>
+                            <Border BorderBrush="Silver" BorderThickness="0,1,0,0" Margin="0,8" />
+                            <WrapPanel>
+                                <Image Source="/WpfApp2Practice1;component/Image/help.jpg" Width="16" Height="16" Margin="0,0,5,0" />
+                                <TextBlock FontStyle="Italic">Press F1 for more help(还没做呢)</TextBlock>
+                            </WrapPanel>
+                        </StackPanel>
+                    </MenuItem.ToolTip>
+                </MenuItem>
+                <MenuItem Header="_Exit" Click="Top_Click">
+                    <MenuItem.ToolTip>
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <Image Source="/WpfApp2Practice1;component/Image/return.jpg" Width="16" Height="16" Margin="0,0,5,0"/>
+                                <TextBlock FontWeight="Bold" FontSize="14">退出学生系统</TextBlock>
+                            </StackPanel>
+                            <TextBlock>
+                                您将直接退出该系统
+                                <LineBreak />
+                                如系统出现异常，请报告给开发者（联系方式见“拓展”），感谢
+                            </TextBlock>
+                            <Border BorderBrush="Silver" BorderThickness="0,1,0,0" Margin="0,8" />
+                            <WrapPanel>
+                                <Image Source="/WpfApp2Practice1;component/Image/help.jpg" Width="16" Height="16" Margin="0,0,5,0" />
+                                <TextBlock FontStyle="Italic">Press F1 for more help(还没做呢)</TextBlock>
+                            </WrapPanel>
+                        </StackPanel>
+                    </MenuItem.ToolTip>
+                </MenuItem>
+                <MenuItem Header="E_xpand" >
+                    <MenuItem.ToolTip>
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <Image Source="/WpfApp2Practice1;component/Image/expand.jpg" Width="16" Height="16" Margin="0,0,5,0"/>
+                                <TextBlock FontWeight="Bold" FontSize="14">拓展</TextBlock>
+                            </StackPanel>
+                            <TextBlock>
+                                该列表下包括一些其他功能，未来还有可能将其扩充
+                                <LineBreak />
+                                如有好的建议和意见可以报告给开发者，感谢
+                            </TextBlock>
+                            <Border BorderBrush="Silver" BorderThickness="0,1,0,0" Margin="0,8" />
+                            <WrapPanel>
+                                <Image Source="/WpfApp2Practice1;component/Image/help.jpg" Width="16" Height="16" Margin="0,0,5,0" />
+                                <TextBlock FontStyle="Italic">Press F1 for more help(还没做呢)</TextBlock>
+                            </WrapPanel>
+                        </StackPanel>
+                    </MenuItem.ToolTip>
+                    <MenuItem Header="T_hank You" Click="Top_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/WpfApp2Practice1;component/Image/smile.jpg" Margin="0,0,5,0" />
+                        </MenuItem.Icon>
+                        <MenuItem.ToolTip>
+                            <TextBlock FontWeight="Bold" FontSize="14">感谢使用</TextBlock>
+                        </MenuItem.ToolTip>
+                    </MenuItem>
+                    <Separator />
+                    <MenuItem Header="H_ome" Click="Top_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/WpfApp2Practice1;component/Image/home.jpg" Margin="0,0,5,0" />
+                        </MenuItem.Icon>
+                        <MenuItem.ToolTip>
+                            <TextBlock FontWeight="Bold" FontSize="14">回到主界面</TextBlock>
+                        </MenuItem.ToolTip>
+                    </MenuItem>
+                </MenuItem>
+            </Menu>
+            <StatusBar DockPanel.Dock="Bottom">
+                <StatusBar.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="100" />
+                            </Grid.ColumnDefinitions>
+                        </Grid>
+                    </ItemsPanelTemplate>
+                </StatusBar.ItemsPanel>
+                <StatusBarItem>
+                    <WrapPanel>
+                        <Image Source="/WpfApp2Practice1;component/Image/man.jpg" Width="16" Height="16"></Image>
+                        <TextBlock FontSize="16" Margin="5,0" VerticalAlignment="Center">总人数:</TextBlock>
+                        <TextBlock Name="statusTBSum" Text="{Binding ElementName=window, Path=studentsList.Count}" FontSize="16" VerticalAlignment="Center"/>
+                    </WrapPanel>
+                </StatusBarItem>
+                <StatusBarItem Grid.Column="3">
+                    <WrapPanel>
+                        <Image Name="statusIGIsSave" Width="16" Height="16"/>
+                        <TextBlock Name="statusTBIsSave" FontSize="12" Margin="5,0" VerticalAlignment="Center"/>
+                    </WrapPanel>
+                </StatusBarItem>
+            </StatusBar>
+            <StackPanel>
+                <TextBox Name="topTBFind" Width="80" HorizontalAlignment="Left" Margin="10,5,0,0" Visibility="Collapsed" TextChanged="TopTBFind_TextChanged"/>
+                <ListView Name="NowStudentList" Margin="10" ItemsSource="{Binding Source={StaticResource studentsListViewSource}}">
+                    <ListView.Resources>
+                        <Style TargetType="GridViewColumnHeader">
+                            <Setter Property="HorizontalContentAlignment" Value="Left" />
+                        </Style>
+                    </ListView.Resources>
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="姓名" Width="120">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Name}" FontSize="25" Foreground="Black"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="学号" Width="80">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding StuNo}" FontSize="25" Foreground="Black"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="科目1" Width="80">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Score_0}" FontSize="25" Foreground="LightBlue"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="科目2" Width="80">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Score_1}" FontSize="25" Foreground="LightCoral"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="科目3" Width="80">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Score_2}" FontSize="25" Foreground="LightSalmon"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="科目4" Width="80">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Score_3}" FontSize="25" Foreground="LightSeaGreen"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="科目5" Width="80">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Score_4}" FontSize="25" Foreground="LightGray"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="科目6" Width="80">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Score_5}" FontSize="25" Foreground="LightGreen"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="科目7" Width="80">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Score_6}" FontSize="25" Foreground="LightPink"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="总成绩" Width="80">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Sumscore}" FontSize="25" Foreground="LightSkyBlue"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </StackPanel>
+        </DockPanel>
+        <Border Name="AddPad" Width="400" Height="400" BorderBrush="AliceBlue" BorderThickness="2" Background="White" Visibility="Collapsed" Panel.ZIndex="2">
+            <StackPanel>
+                <Label>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/WpfApp2Practice1;component/Image/write.jpg" Width="16" Height="16" Margin="10,0"/>
+                        <TextBlock>添加学生信息</TextBlock>
+                    </StackPanel>
+                </Label>
+                <WrapPanel HorizontalAlignment="Center">
+                    <StackPanel Orientation="Vertical" Margin="2">
+                        <Label Content="_Name:" Target="{Binding ElementName=tBName}" />
+                        <TextBox Name="tBName" Width="100"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Margin="2">
+                        <Label Content="_StuNo:" Target="{Binding ElementName=tBStuNo}" />
+                        <TextBox  Name="tBStuNo" Width="100"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Margin="2">
+                        <Label Content="Score_1:" Target="{Binding ElementName=tBScore_0}" />
+                        <TextBox  Name="tBScore_0" Width="100"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Margin="2">
+                        <Label Content="Score_2:" Target="{Binding ElementName=tBScore_1}" />
+                        <TextBox  Name="tBScore_1" Width="100"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Margin="2">
+                        <Label Content="Score_3:" Target="{Binding ElementName=tBScore_2}" />
+                        <TextBox  Name="tBScore_2" Width="100"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Margin="2">
+                        <Label Content="Score_4:" Target="{Binding ElementName=tBScore_3}" />
+                        <TextBox  Name="tBScore_3" Width="100"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Margin="2">
+                        <Label Content="Score_5:" Target="{Binding ElementName=tBScore_4}" />
+                        <TextBox  Name="tBScore_4" Width="100"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Margin="2">
+                        <Label Content="Score_6:" Target="{Binding ElementName=tBScore_5}" />
+                        <TextBox  Name="tBScore_5" Width="100"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Margin="2">
+                        <Label Content="Score_7:" Target="{Binding ElementName=tBScore_6}" />
+                        <TextBox  Name="tBScore_6" Width="100"/>
+                    </StackPanel>
+                </WrapPanel>
+                <Button Margin="10" Width="120" Height="30" Background="White" Click="Button_AddStu_Click">添加</Button>
+                <Button Width="100" Background="White" Click="Pad_Button_Return_Click">返回</Button>
+            </StackPanel>
+        </Border>
+        <Border Name="TotalPad" Width="400" Height="400" BorderBrush="AliceBlue" BorderThickness="2" Background="White" Visibility="Collapsed" Panel.ZIndex="2">
+            <StackPanel>
+                <Label>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/WpfApp2Practice1;component/Image/light.jpg" Width="16" Height="16" Margin="10,0"/>
+                        <TextBlock>数据总体分析</TextBlock>
+                    </StackPanel>
+                </Label>
+                <Border BorderBrush="AntiqueWhite" BorderThickness="2" CornerRadius="3" Margin="10" MaxHeight="300" MaxWidth="350">
+                    <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <TextBlock Name="tBTotalShowNone">无数据分析</TextBlock>
+                            <StackPanel Name="sPnlTotalShow">
+                                <Label>总人数：</Label>
+                                <TextBlock HorizontalAlignment="Center" FontSize="16" Name="tBTotalShow_0" />
+                                <Border BorderBrush="AntiqueWhite" BorderThickness="1" />
+                                <Label>科目1平均分：</Label>
+                                <TextBlock HorizontalAlignment="Center" FontSize="16" Name="tBTotalShow_1" />
+                                <Border BorderBrush="AntiqueWhite" BorderThickness="1" />
+                                <Label>科目2平均分：</Label>
+                                <TextBlock HorizontalAlignment="Center" FontSize="16" Name="tBTotalShow_2" />
+                                <Border BorderBrush="AntiqueWhite" BorderThickness="1" />
+                                <Label>科目3平均分：</Label>
+                                <TextBlock HorizontalAlignment="Center" FontSize="16" Name="tBTotalShow_3" />
+                                <Border BorderBrush="AntiqueWhite" BorderThickness="1" />
+                                <Label>科目4平均分：</Label>
+                                <TextBlock HorizontalAlignment="Center" FontSize="16" Name="tBTotalShow_4" />
+                                <Border BorderBrush="AntiqueWhite" BorderThickness="1" />
+                                <Label>科目5平均分：</Label>
+                                <TextBlock HorizontalAlignment="Center" FontSize="16" Name="tBTotalShow_5" />
+                                <Border BorderBrush="AntiqueWhite" BorderThickness="1" />
+                                <Label>科目6平均分：</Label>
+                                <TextBlock HorizontalAlignment="Center" FontSize="16" Name="tBTotalShow_6" />
+                                <Border BorderBrush="AntiqueWhite" BorderThickness="1" />
+                                <Label>科目7平均分：</Label>
+                                <TextBlock HorizontalAlignment="Center" FontSize="16" Name="tBTotalShow_7" />
+                                <Border BorderBrush="AntiqueWhite" BorderThickness="1" />
+                                <Label>总成绩平均分：</Label>
+                                <TextBlock HorizontalAlignment="Center" FontSize="16" Name="tBTotalShow_8" />
+                                <Border BorderBrush="AntiqueWhite" BorderThickness="1" />
+                            </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Border>
+                <Button Width="100" Background="White" Click="Pad_Button_Return_Click">返回</Button>
+            </StackPanel>
+        </Border>
+        <Border Name="ModificationPad" Width="400" Height="400" BorderBrush="AliceBlue" BorderThickness="2" Background="White" Visibility="Collapsed" Panel.ZIndex="2">
+            <StackPanel>
+                <Label>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/WpfApp2Practice1;component/Image/change.jpg" Width="16" Height="16" Margin="10,0"/>
+                        <TextBlock>修改学生信息</TextBlock>
+                    </StackPanel>
+                </Label>
+                <Border BorderBrush="AntiqueWhite" BorderThickness="2" CornerRadius="3" Margin="10" MaxHeight="300" MaxWidth="350">
+                    <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto">
+                        <WrapPanel Margin="5">
+                            <StackPanel Orientation="Vertical" Margin="2">
+                                <Label Content="_Name:" Target="{Binding ElementName=tBName1}" />
+                                <TextBox Name="tBName1" Width="100" TextChanged="TBName1_TextChanged"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Vertical" Margin="2">
+                                <Label Content="_StuNo:" Target="{Binding ElementName=tBStuNo1}" />
+                                <TextBox  Name="tBStuNo1" Width="100" TextChanged="TBName1_TextChanged"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Vertical" Margin="2">
+                                <Label Content="Score_1:" Target="{Binding ElementName=tBScore1_0}" />
+                                <TextBox  Name="tBScore1_0" Width="100" TextChanged="TBName1_TextChanged"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Vertical" Margin="2">
+                                <Label Content="Score_2:" Target="{Binding ElementName=tBScore1_1}" />
+                                <TextBox  Name="tBScore1_1" Width="100" TextChanged="TBName1_TextChanged"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Vertical" Margin="2">
+                                <Label Content="Score_3:" Target="{Binding ElementName=tBScore1_2}" />
+                                <TextBox  Name="tBScore1_2" Width="100" TextChanged="TBName1_TextChanged"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Vertical" Margin="2">
+                                <Label Content="Score_4:" Target="{Binding ElementName=tBScore1_3}" />
+                                <TextBox  Name="tBScore1_3" Width="100" TextChanged="TBName1_TextChanged"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Vertical" Margin="2">
+                                <Label Content="Score_5:" Target="{Binding ElementName=tBScore1_4}" />
+                                <TextBox  Name="tBScore1_4" Width="100" TextChanged="TBName1_TextChanged"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Vertical" Margin="2">
+                                <Label Content="Score_6:" Target="{Binding ElementName=tBScore1_5}" />
+                                <TextBox  Name="tBScore1_5" Width="100" TextChanged="TBName1_TextChanged"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Vertical" Margin="2">
+                                <Label Content="Score_7:" Target="{Binding ElementName=tBScore1_6}" />
+                                <TextBox  Name="tBScore1_6" Width="100" TextChanged="TBName1_TextChanged"/>
+                            </StackPanel>
+                        </WrapPanel>
+                    </ScrollViewer>
+                </Border>
+                <Button Margin="10" Width="120" Height="30" Background="White" Click="Button_Modification_Click">修改</Button>
+                <Button Width="100" Background="White" Click="Pad_Button_Return_Click">返回</Button>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

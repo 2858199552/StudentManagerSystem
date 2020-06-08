@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<ArrayOfStudent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Student>
+    <Name>1</Name>
+    <StuNo>1</StuNo>
+    <Score_0>1</Score_0>
+    <Score_1>1</Score_1>
+    <Score_2>1</Score_2>
+    <Score_3>1</Score_3>
+    <Score_4>1</Score_4>
+    <Score_5>1</Score_5>
+    <Score_6>1</Score_6>
+  </Student>
+</ArrayOfStudent>
