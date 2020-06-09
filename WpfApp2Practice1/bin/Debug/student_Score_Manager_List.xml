@@ -1,6 +1,17 @@
 <?xml version="1.0"?>
 <ArrayOfStudent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Student>
+    <Name>q</Name>
+    <StuNo>2</StuNo>
+    <Score_0>2</Score_0>
+    <Score_1>2</Score_1>
+    <Score_2>2</Score_2>
+    <Score_3>2</Score_3>
+    <Score_4>2</Score_4>
+    <Score_5>2</Score_5>
+    <Score_6>2</Score_6>
+  </Student>
+  <Student>
     <Name>1</Name>
     <StuNo>1</StuNo>
     <Score_0>1</Score_0>

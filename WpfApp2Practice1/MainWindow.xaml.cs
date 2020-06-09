@@ -28,9 +28,29 @@ namespace WpfApp2Practice1
             get; set;
         } = new ObservableCollection<Student>();
 
+        #region 全局设置
+        public static bool isAddedClose;
+        public static int numberSaveMessage;
+        public static int numberReadMessage;
+        public static bool isDeleteMessage = true;
+        public static bool isNotSavedExitMessage = true;
+        public static bool isFullScreen;
+        #endregion
+
+        public bool isSave;
+
+
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void Window_ContentRendered(object sender, EventArgs e)
+        {
+            if (isFullScreen)
+                WindowState = WindowState.Maximized;
+            else
+                WindowState = WindowState.Normal;
         }
 
         private void MainMenu_Click(object sender, RoutedEventArgs e)
@@ -67,7 +87,8 @@ namespace WpfApp2Practice1
                     MessageBox.Show("请先选择学生");
                     break;
                 case "btnMainExit":
-                    Close();
+                    MainMenu.Visibility = Visibility.Visible;
+                    Menu_Exit();
                     break;
             }
         }
@@ -143,14 +164,18 @@ namespace WpfApp2Practice1
                 case "_Delete":
                     if (NowStudentList.SelectedItem != null)
                     {
+                        if (isDeleteMessage)
+                            if (MessageBox.Show("您确定执行“删除”操作吗，这将不可逆！", "警告", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes)
+                                return;
                         studentsList.Remove(NowStudentList.SelectedItem as Student);
-                        StatusbarSave_Check(false);
+                        isSave = false;
+                        StatusbarSave_Check();
                     }
                     else
                         MessageBox.Show("请先选择学生后再删除");
                     break;
                 case "_Exit":
-                    Close();
+                    Menu_Exit();
                     break;
                 case "T_hank You":
                     MessageBox.Show("   系统正在茁壮成长.zZ" + "\n" + "   开发者Q:2858199552" + "        ♪(´▽｀)", "与开发者对话", MessageBoxButton.OKCancel, MessageBoxImage.Information, MessageBoxResult.OK);
@@ -160,6 +185,49 @@ namespace WpfApp2Practice1
                     topTBFind.Visibility = Visibility.Collapsed;
                     pnlStudentList.Visibility = Visibility.Collapsed;
                     MainMenu.Visibility = Visibility.Visible;
+                    break;
+                case "O_ptions":
+                    if (isAddedClose)
+                        rBAddedClose_0.IsChecked = true;
+                    else
+                        rBAddedClose_1.IsChecked = true;
+                    switch (numberSaveMessage)
+                    {
+                        case 0:
+                            rBSaveMessage_0.IsChecked = true;
+                            break;
+                        case 1:
+                            rBSaveMessage_1.IsChecked = true;
+                            break;
+                        case 2:
+                            rBSaveMessage_2.IsChecked = true;
+                            break;
+                    }
+                    switch (numberReadMessage)
+                    {
+                        case 0:
+                            rBReadMessage_0.IsChecked = true;
+                            break;
+                        case 1:
+                            rBReadMessage_1.IsChecked = true;
+                            break;
+                        case 2:
+                            rBReadMessage_2.IsChecked = true;
+                            break;
+                    }
+                    if (isDeleteMessage)
+                        rBDeleteMessage_0.IsChecked = true;
+                    else
+                        rBDeleteMessage_1.IsChecked = true;
+                    if (isNotSavedExitMessage)
+                        rBNotSavedExitMessage_0.IsChecked = true;
+                    else
+                        rBNotSavedExitMessage_1.IsChecked = true;
+                    if (isFullScreen)
+                        rBFullScreen_0.IsChecked = true;
+                    else
+                        rBFullScreen_1.IsChecked = true;
+                    OptionsPad.Visibility = Visibility.Visible;
                     break;
             }
         }
@@ -216,7 +284,11 @@ namespace WpfApp2Practice1
                 studentsList.Insert(newIndex, currentStudent);
                 tBName.Text = tBStuNo.Text = tBScore_0.Text = tBScore_1.Text = tBScore_2.Text = tBScore_3.Text = tBScore_4.Text = tBScore_5.Text = tBScore_6.Text = "";
                 //MessageBox.Show("成功");
-                StatusbarSave_Check(false);
+                isSave = false;
+                StatusbarSave_Check();
+
+                if (isAddedClose)
+                    AddPad.Visibility = Visibility.Collapsed;
             }
             else
                 MessageBox.Show("请将信息填写完整后再“添加”");
@@ -229,11 +301,27 @@ namespace WpfApp2Practice1
 
         public void Menu_Save()
         {
+            switch (numberSaveMessage)
+            {
+                case 0:
+                    if (MessageBox.Show("您确定执行“保存”操作吗，这将覆盖你之前的文件不可逆！（请注意您当前的列表成员数是否为0，并检查是否已读取文件）", "警告", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes)
+                        return;
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    if (studentsList.Count > 0)
+                        break;
+                    else if (MessageBox.Show("您确定执行“保存”操作吗，这将覆盖你之前的文件不可逆！（请注意您当前的列表成员数为0，请检查是否已读取文件）", "警告", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes)
+                        return;
+                    break;
+            }
             XmlSerializer serializer = new XmlSerializer(typeof(ObservableCollection<Student>));
             using(Stream write=new FileStream("student_Score_Manager_List.xml", FileMode.Create))
             {
                 serializer.Serialize(write, studentsList);
-                StatusbarSave_Check(true);
+                isSave = true;
+                StatusbarSave_Check();
             }
         }
 
@@ -241,6 +329,21 @@ namespace WpfApp2Practice1
         {
             if (File.Exists("student_Score_Manager_List.xml"))
             {
+                switch (numberReadMessage)
+                {
+                    case 0:
+                        if (MessageBox.Show("您确定执行“读取”操作吗，这将覆盖你当前的列表不可逆！（请注意您的文件是否需要保存）", "警告", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes)
+                            return;
+                        break;
+                    case 1:
+                        break;
+                    case 2:
+                        if (isSave)
+                            break;
+                        else if (MessageBox.Show("您确定执行“读取”操作吗，这将覆盖你当前的列表不可逆！（请注意您的文件尚未保存）", "警告", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes)
+                            return;
+                        break;
+                }
                 XmlSerializer serializer = new XmlSerializer(typeof(List<Student>));
                 using(Stream reader = new FileStream("student_Score_Manager_List.xml", FileMode.Open))
                 {
@@ -310,6 +413,13 @@ namespace WpfApp2Practice1
             tBTotalShow_8.Text = (tempEachSunScore[7] / tempSumMan).ToString();
         }
 
+        public void Menu_Exit()
+        {
+            if (isNotSavedExitMessage && !isSave && MessageBox.Show("您真的要退出软件吗，您还有文件未保存呢！（软件每次打开默认为未保存，如果软件打开后未进行任何修改文件操作，则不用理会这条警告）", "警告", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes)
+                return;
+            Close();
+        }
+
         private void CollectionViewSource_Filter(object sender, FilterEventArgs e)
         {
             if(((e.Item as Student).Name.IndexOf(topTBFind.Text,StringComparison.OrdinalIgnoreCase) >= 0))
@@ -352,7 +462,8 @@ namespace WpfApp2Practice1
                 studentsList.Insert(newIndex, currentStudent);
                 tBName1.Text = tBStuNo1.Text = tBScore1_0.Text = tBScore1_1.Text = tBScore1_2.Text = tBScore1_3.Text = tBScore1_4.Text = tBScore1_5.Text = tBScore1_6.Text = "";
                 //MessageBox.Show("成功");
-                StatusbarSave_Check(false);
+                isSave = false;
+                StatusbarSave_Check();
 
                 ModificationPad.Visibility = Visibility.Collapsed;
             }
@@ -369,7 +480,7 @@ namespace WpfApp2Practice1
             }
         }
 
-        private void StatusbarSave_Check(bool isSave)
+        private void StatusbarSave_Check()
         {
             if(isSave)
             {
@@ -381,6 +492,41 @@ namespace WpfApp2Practice1
                 statusIGIsSave.Source = new BitmapImage(new Uri("/Image/change.jpg", UriKind.Relative));
                 statusTBIsSave.Text = "未保存";
             }
+        }
+
+        private void Menu_Options_tB_Find_LostFocus(object sender, RoutedEventArgs e)
+        {
+            Menu_Options_tB_Find.Text = "搜索选项（暂时没用）";
+            Menu_Options_tB_Find.Foreground = Brushes.Silver;
+        }
+
+        private void Menu_Options_tB_Find_GotFocus(object sender, RoutedEventArgs e)
+        {
+            Menu_Options_tB_Find.Text = "";
+            Menu_Options_tB_Find.Foreground = Brushes.Black;
+        }
+
+        public void Button_Options_Click(object sender, RoutedEventArgs e)
+        {
+            isAddedClose = (rBAddedClose_0.IsChecked == true);
+            if (rBSaveMessage_0.IsChecked == true)
+                numberSaveMessage = 0;
+            else if (rBSaveMessage_1.IsChecked == true)
+                numberSaveMessage = 1;
+            else
+                numberSaveMessage = 2;
+            if (rBReadMessage_0.IsChecked == true)
+                numberReadMessage = 0;
+            else if (rBReadMessage_1.IsChecked == true)
+                numberReadMessage = 1;
+            else
+                numberReadMessage = 2;
+            isDeleteMessage = (rBDeleteMessage_0.IsChecked == true);
+            isNotSavedExitMessage = (rBNotSavedExitMessage_0.IsChecked == true);
+            isFullScreen = (rBFullScreen_0.IsChecked == true);
+
+            OptionsPad.Visibility = Visibility.Collapsed;
+            //该界面暂时不考虑怎么关闭
         }
     }
 }

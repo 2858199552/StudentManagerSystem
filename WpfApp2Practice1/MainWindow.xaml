@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         x:Name="window"
         xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
-        Title="学生成绩管理系统" Height="540" Width="960" Icon="/WpfApp2Practice1;component/Image/science.jpg">
+        Title="学生成绩管理系统" Height="540" Width="960" Icon="/WpfApp2Practice1;component/Image/science.jpg" ContentRendered="Window_ContentRendered">
     <Window.Resources>
         <CollectionViewSource Source="{Binding ElementName=window, Path=studentsList}" x:Key="studentsListViewSource" Filter="CollectionViewSource_Filter" >
             <CollectionViewSource.SortDescriptions>
@@ -315,6 +315,14 @@
                             <TextBlock FontWeight="Bold" FontSize="14">回到主界面</TextBlock>
                         </MenuItem.ToolTip>
                     </MenuItem>
+                    <MenuItem Header="O_ptions" Click="Top_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/WpfApp2Practice1;component/Image/gear.jpg" Margin="0,0,5,0" />
+                        </MenuItem.Icon>
+                        <MenuItem.ToolTip>
+                            <TextBlock FontWeight="Bold" FontSize="14">选项</TextBlock>
+                        </MenuItem.ToolTip>
+                    </MenuItem>
                 </MenuItem>
             </Menu>
             <StatusBar DockPanel.Dock="Bottom">
@@ -436,6 +444,7 @@
                     <StackPanel Orientation="Horizontal">
                         <Image Source="/WpfApp2Practice1;component/Image/write.jpg" Width="16" Height="16" Margin="10,0"/>
                         <TextBlock>添加学生信息</TextBlock>
+                        <TextBlock FontSize="12" Foreground="Silver" VerticalAlignment="Bottom">(Name:姓名,StuNo:学号,Score1:分数1...)</TextBlock>
                     </StackPanel>
                 </Label>
                 <WrapPanel HorizontalAlignment="Center">
@@ -578,6 +587,51 @@
                     </ScrollViewer>
                 </Border>
                 <Button Margin="10" Width="120" Height="30" Background="White" Click="Button_Modification_Click">修改</Button>
+                <Button Width="100" Background="White" Click="Pad_Button_Return_Click">返回</Button>
+            </StackPanel>
+        </Border>
+        <Border Name="OptionsPad" Width="450" Height="780" BorderBrush="AliceBlue" BorderThickness="2" Background="White" Visibility="Collapsed" Panel.ZIndex="2">
+            <StackPanel>
+                <Label>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/WpfApp2Practice1;component/Image/gear.jpg" Width="16" Height="16" Margin="10,0"/>
+                        <TextBlock>设置</TextBlock>
+                    </StackPanel>
+                </Label>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBox Name="Menu_Options_tB_Find" MinWidth="80" Foreground="Silver" HorizontalAlignment="Left" Margin="5" LostFocus="Menu_Options_tB_Find_LostFocus" GotFocus="Menu_Options_tB_Find_GotFocus">搜索选项（暂时没用）</TextBox>
+                    <Border BorderBrush="AntiqueWhite" BorderThickness="2" CornerRadius="3" HorizontalAlignment="Center" Margin="10" Grid.Row="1" MaxHeight="300" MinWidth="350">
+                        <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto" >
+                            <StackPanel>
+                                <Label FontWeight="Bold">“添加”后自动退出添加界面</Label>
+                                <RadioButton Name="rBAddedClose_0" GroupName="addedClose" Margin="10,0,0,0">是</RadioButton>
+                                <RadioButton Name="rBAddedClose_1" GroupName="addedClose" IsChecked="True" Margin="10,0,0,0">否</RadioButton>
+                                <Label FontWeight="Bold">执行"Save"（保存）前是否出现警告消息</Label>
+                                <RadioButton Name="rBSaveMessage_0" GroupName="saveMessage" Margin="10,0,0,0" IsChecked="True">是</RadioButton>
+                                <RadioButton Name="rBSaveMessage_1" GroupName="saveMessage" Margin="10,0,0,0">否</RadioButton>
+                                <RadioButton Name="rBSaveMessage_2" GroupName="saveMessage" Margin="10,0,0,0">仅在当前列表为空时</RadioButton>
+                                <Label FontWeight="Bold">执行"Read"（读取）前是否出现警告消息</Label>
+                                <RadioButton Name="rBReadMessage_0" GroupName="readMessage" Margin="10,0,0,0" IsChecked="True">是</RadioButton>
+                                <RadioButton Name="rBReadMessage_1" GroupName="readMessage" Margin="10,0,0,0">否</RadioButton>
+                                <RadioButton Name="rBReadMessage_2" GroupName="readMessage" Margin="10,0,0,0">仅在文件未保存时</RadioButton>
+                                <Label FontWeight="Bold">执行"Delete"（删除）前是否出现警告消息</Label>
+                                <RadioButton Name="rBDeleteMessage_0" GroupName="deleteMessage" Margin="10,0,0,0" IsChecked="True">是</RadioButton>
+                                <RadioButton Name="rBDeleteMessage_1" GroupName="deleteMessage" Margin="10,0,0,0">否</RadioButton>
+                                <Label FontWeight="Bold">文件未保存便退出软件时出现警告</Label>
+                                <RadioButton Name="rBNotSavedExitMessage_0" GroupName="notSavedExitMessage" Margin="10,0,0,0" IsChecked="True">是</RadioButton>
+                                <RadioButton Name="rBNotSavedExitMessage_1" GroupName="notSavedExitMessage" Margin="10,0,0,0">否</RadioButton>
+                                <Label FontWeight="Bold">启动时是否全屏：</Label>
+                                <RadioButton Name="rBFullScreen_0" GroupName="fullScreen" Margin="10,0,0,0">是</RadioButton>
+                                <RadioButton Name="rBFullScreen_1" GroupName="fullScreen" IsChecked="True" Margin="10,0,0,0">否</RadioButton>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Border>
+                </Grid>
+                <Button Margin="10" Width="120" Height="30" Background="White" Click="Button_Options_Click">确认</Button>
                 <Button Width="100" Background="White" Click="Pad_Button_Return_Click">返回</Button>
             </StackPanel>
         </Border>
