@@ -1,3 +1,4 @@
+[![GitHub](https://img.shields.io/github/license/2858199552/StudentManagerSystem)](https://github.com/2858199552)
 # 学生成绩管理系统
 ## 利用WPF构建的初步学生成绩管理系统
 **开发语言：XAML、C#**  
