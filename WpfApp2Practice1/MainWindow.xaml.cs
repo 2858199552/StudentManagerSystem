@@ -28,6 +28,8 @@ namespace WpfApp2Practice1
             get; set;
         } = new ObservableCollection<Student>();
 
+        public Dictionary<string, Account> dicAccount = new Dictionary<string, Account>();
+
         #region 全局设置
         public static bool isAddedClose;
         public static int numberSaveMessage;
@@ -38,7 +40,10 @@ namespace WpfApp2Practice1
         #endregion
 
         public bool isSave;
-
+        public enum Identity { teacher,student}
+        public Identity identity;
+        public Account currentAccount;
+        bool[] sumRegisterOK = new bool[3];
 
         public MainWindow()
         {
@@ -260,6 +265,46 @@ namespace WpfApp2Practice1
             public float Sumscore => Score_0 + Score_1 + Score_2 + Score_3 + Score_4 + Score_5 + Score_6;
         }
 
+        /// <summary>
+        /// 账户信息
+        /// </summary>
+        public class Account
+        {
+            private string User { get; set; }
+            private string Password { get; set; }
+            private Identity Identity { get; set; }
+            private string SaveUserFileName { get; set; }
+
+            public Account()
+            {
+                SaveUserFileName = "User_" + User + "_student_Score_Manager_List.xml";
+            }
+
+            /// <summary>
+            /// 正式注册账户
+            /// </summary>
+            /// <param name="user">用户名</param>
+            /// <param name="password">密码</param>
+            /// <param name="identity">用户身份</param>
+            public Account(string user,string password,Identity identity)
+            {
+                User = user;
+                Password = password;
+                Identity = identity;
+                SaveUserFileName = "User_" + User + "_student_Score_Manager_List.xml";
+            }
+
+            public string Return_SaveUserFileName()
+            {
+                return SaveUserFileName;
+            }
+
+            public bool VerifyUser(string password, Identity identity)
+            {
+                return (password == Password) && (identity == Identity);
+            }
+        }
+
         public void Button_AddStu_Click(object sender, RoutedEventArgs e)
         {
             if (tBName.Text.Length > 0 && tBStuNo.Text.Length > 0 && tBScore_0.Text.Length > 0 && tBScore_1.Text.Length > 0 && tBScore_2.Text.Length > 0 && tBScore_3.Text.Length > 0 && tBScore_4.Text.Length > 0 && tBScore_5.Text.Length > 0 && tBScore_6.Text.Length > 0)
@@ -317,7 +362,7 @@ namespace WpfApp2Practice1
                     break;
             }
             XmlSerializer serializer = new XmlSerializer(typeof(ObservableCollection<Student>));
-            using(Stream write=new FileStream("student_Score_Manager_List.xml", FileMode.Create))
+            using(Stream write=new FileStream(currentAccount.Return_SaveUserFileName(), FileMode.Create))
             {
                 serializer.Serialize(write, studentsList);
                 isSave = true;
@@ -345,7 +390,7 @@ namespace WpfApp2Practice1
                         break;
                 }
                 XmlSerializer serializer = new XmlSerializer(typeof(List<Student>));
-                using(Stream reader = new FileStream("student_Score_Manager_List.xml", FileMode.Open))
+                using(Stream reader = new FileStream(currentAccount.Return_SaveUserFileName(), FileMode.Open))
                 {
                     List<Student> tempList = (List<Student>)serializer.Deserialize(reader);
                     studentsList.Clear();
@@ -527,6 +572,110 @@ namespace WpfApp2Practice1
 
             OptionsPad.Visibility = Visibility.Collapsed;
             //该界面暂时不考虑怎么关闭
+        }
+
+        private void CBLogin_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if ((sender as ComboBox).SelectedIndex == 0)
+                identity = Identity.teacher;
+            else
+                identity = Identity.student;
+        }
+
+        private void Button_Login_Click(object sender, RoutedEventArgs e)
+        {
+            if (dicAccount.ContainsKey(tBoxLoginUsers.Text))
+            {
+                if (dicAccount[tBoxLoginUsers.Text].VerifyUser(pBoxLoginPassword.Password, identity))
+                {
+                    currentAccount = dicAccount[tBoxLoginUsers.Text];
+                    tBoxLoginUsers.Text = pBoxLoginPassword.Password = "";
+                    cBLoginIdentity.SelectedIndex = 0;
+                    MessageBox.Show("登陆成功");
+                    return;
+                }
+            }
+            MessageBox.Show("登陆失败请重试");
+        }
+
+        private void Button_Go_RegisterAndLoginPad_Click(object sender, RoutedEventArgs e)
+        {
+            if ((sender as Button).Name == "Button_LoginPad_Go_RegisterPad")
+            {
+                tBoxLoginUsers.Text = pBoxLoginPassword.Password = "";
+                cBLoginIdentity.SelectedIndex = 0;
+                LoginPad.Visibility = Visibility.Collapsed;
+                RegisterPad.Visibility = Visibility.Visible;
+            }
+            else if ((sender as Button).Name == "Button_Register_Go_LoginPad")
+            {
+                tBoxRegisterUsers.Text = pBoxRegisterPassword.Password = pBoxRegisterPasswordAgain.Password = "";
+                cBRegisterIdentity.SelectedIndex = 0;
+                LoginPad.Visibility = Visibility.Visible;
+                RegisterPad.Visibility = Visibility.Collapsed;
+            }
+            else if ((sender as Button).Name == "Button_LoginPad_Exit")
+                Close();
+        }
+
+        private void Button_Register_Click(object sender, RoutedEventArgs e)
+        {
+            if (sumRegisterOK[0] && sumRegisterOK[1] && sumRegisterOK[2])
+            {
+                dicAccount.Add(tBoxRegisterUsers.Text, new Account(tBoxRegisterUsers.Text, pBoxRegisterPassword.Password, cBRegisterIdentity.SelectedIndex == 0 ? Identity.teacher : Identity.student));
+                MessageBox.Show("注册成功 ");
+                tBoxRegisterUsers.Text = pBoxRegisterPassword.Password = pBoxRegisterPasswordAgain.Password = "";
+                cBRegisterIdentity.SelectedIndex = 0;
+                RegisterPad.Visibility = Visibility.Collapsed;
+                LoginPad.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                MessageBox.Show("注册失败");
+            }
+        }
+
+        private void TBoxRegisterUsers_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (dicAccount.ContainsKey(tBoxRegisterUsers.Text))
+            {
+                ellipseRegister_0.Fill = Brushes.Yellow;
+                sumRegisterOK[0] = false;
+            }
+            else if (tBoxRegisterUsers.Text.Length == 10)
+            {
+                ellipseRegister_0.Fill = Brushes.LightGreen;
+                sumRegisterOK[0] = true;
+            }
+            else
+            {
+                ellipseRegister_0.Fill = Brushes.Red;
+                sumRegisterOK[0] = false;
+            }
+        }
+
+        private void PBoxRegisterPassword_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            if ((pBoxRegisterPassword.Password.Length >= 10) && (pBoxRegisterPassword.Password.Length <= 15))
+            {
+                ellipseRegister_1.Fill = Brushes.LightGreen;
+                sumRegisterOK[1] = true;
+            }
+            else
+            {
+                ellipseRegister_1.Fill = Brushes.Red;
+                sumRegisterOK[1] = false;
+            }
+            if ((pBoxRegisterPasswordAgain.Password.Length >= 10) && (pBoxRegisterPasswordAgain.Password.Length <= 15) && (pBoxRegisterPassword.Password == pBoxRegisterPasswordAgain.Password))
+            {
+                ellipseRegister_2.Fill = Brushes.LightGreen;
+                sumRegisterOK[2] = true;
+            }
+            else
+            {
+                ellipseRegister_2.Fill = Brushes.Red;
+                sumRegisterOK[2] = false;
+            }
         }
     }
 }
