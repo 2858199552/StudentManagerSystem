@@ -25,13 +25,13 @@
                     <ComboBox Name="cBLoginIdentity" MaxWidth="120" SelectionChanged="CBLogin_SelectionChanged">
                         <ComboBoxItem IsSelected="True">
                             <StackPanel Orientation="Horizontal">
-                                <Image Source="/WpfApp2Practice1;component/Image/man.jpg" Width="16" Height="16" />
+                                <Image Source="/WpfApp2Practice1;component/Image/teacher.jpg" Width="16" Height="16" />
                                 <TextBlock>老师</TextBlock>
                             </StackPanel>
                         </ComboBoxItem>
                         <ComboBoxItem>
                             <StackPanel Orientation="Horizontal">
-                                <Image Source="/WpfApp2Practice1;component/Image/man.jpg" Width="16" Height="16" />
+                                <Image Source="/WpfApp2Practice1;component/Image/student.jpg" Width="16" Height="16" />
                                 <TextBlock>学生</TextBlock>
                             </StackPanel>
                         </ComboBoxItem>
@@ -41,8 +41,8 @@
                     <Label FontSize="16">密码：</Label>
                     <PasswordBox Name="pBoxLoginPassword" MaxWidth="120"/>
                     <StackPanel Orientation="Horizontal" Margin="10" HorizontalAlignment="Center">
-                        <CheckBox>自动登录</CheckBox>
-                        <CheckBox>记住密码</CheckBox>
+                        <CheckBox Foreground="Silver">自动登录</CheckBox>
+                        <CheckBox Foreground="Silver">记住密码</CheckBox>
                     </StackPanel>
                     <Button Name="Button_Login" Margin="100,10" FontSize="25" Background="AliceBlue" Click="Button_Login_Click">登陆</Button>
                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
@@ -63,13 +63,13 @@
                         <ComboBox Name="cBRegisterIdentity" MaxWidth="120" VerticalAlignment="Center">
                             <ComboBoxItem IsSelected="True">
                                 <StackPanel Orientation="Horizontal">
-                                    <Image Source="/WpfApp2Practice1;component/Image/man.jpg" Width="16" Height="16" />
+                                    <Image Source="/WpfApp2Practice1;component/Image/teacher.jpg" Width="16" Height="16" />
                                     <TextBlock>老师</TextBlock>
                                 </StackPanel>
                             </ComboBoxItem>
                             <ComboBoxItem>
                                 <StackPanel Orientation="Horizontal">
-                                    <Image Source="/WpfApp2Practice1;component/Image/man.jpg" Width="16" Height="16" />
+                                    <Image Source="/WpfApp2Practice1;component/Image/student.jpg" Width="16" Height="16" />
                                     <TextBlock>学生</TextBlock>
                                 </StackPanel>
                             </ComboBoxItem>
@@ -414,9 +414,11 @@
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="100" />
-                                <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="100" />
                             </Grid.ColumnDefinitions>
                         </Grid>
@@ -430,6 +432,13 @@
                     </WrapPanel>
                 </StatusBarItem>
                 <StatusBarItem Grid.Column="3">
+                    <WrapPanel>
+                        <Image Name="statusIGAccountIdentity" Width="16" Height="16"/>
+                        <TextBlock Name="statusTBAccountIdentity" FontSize="12" Margin="5,0" VerticalAlignment="Center"/>
+                        <TextBlock Name="statusTBAccountUser" FontSize="12" Margin="5,0" VerticalAlignment="Center" />
+                    </WrapPanel>
+                </StatusBarItem>
+                <StatusBarItem Grid.Column="5">
                     <WrapPanel>
                         <Image Name="statusIGIsSave" Width="16" Height="16"/>
                         <TextBlock Name="statusTBIsSave" FontSize="12" Margin="5,0" VerticalAlignment="Center"/>

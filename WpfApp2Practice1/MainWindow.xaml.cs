@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml.Serialization;
+using WpfApp2Practice1.ExpandScript;
 
 namespace WpfApp2Practice1
 {
@@ -28,34 +29,33 @@ namespace WpfApp2Practice1
             get; set;
         } = new ObservableCollection<Student>();
 
-        public Dictionary<string, Account> dicAccount = new Dictionary<string, Account>();
+        public SerializableDictionary<string, Account> dicAccount = new SerializableDictionary<string, Account>();
 
-        #region 全局设置
-        public static bool isAddedClose;
-        public static int numberSaveMessage;
-        public static int numberReadMessage;
-        public static bool isDeleteMessage = true;
-        public static bool isNotSavedExitMessage = true;
-        public static bool isFullScreen;
-        #endregion
+
 
         public bool isSave;
         public enum Identity { teacher,student}
         public Identity identity;
-        public Account currentAccount;
+        public Account currentAccount = new Account();
         bool[] sumRegisterOK = new bool[3];
 
         public MainWindow()
         {
             InitializeComponent();
+            //读取本地账户库
+            if (File.Exists("student_Score_Manager_Accounts_List.xml"))
+            {
+                using (FileStream reader = new FileStream("student_Score_Manager_Accounts_List.xml", FileMode.Open))
+                {
+                    XmlSerializer serializer = new XmlSerializer(typeof(SerializableDictionary<string, Account>));
+                    dicAccount = (SerializableDictionary<string, Account>)serializer.Deserialize(reader);
+                }
+            }
         }
 
         private void Window_ContentRendered(object sender, EventArgs e)
         {
-            if (isFullScreen)
-                WindowState = WindowState.Maximized;
-            else
-                WindowState = WindowState.Normal;
+            //账户设置“登陆时自动主页窗口最大化”改到登陆按钮处
         }
 
         private void MainMenu_Click(object sender, RoutedEventArgs e)
@@ -169,7 +169,7 @@ namespace WpfApp2Practice1
                 case "_Delete":
                     if (NowStudentList.SelectedItem != null)
                     {
-                        if (isDeleteMessage)
+                        if (currentAccount.isDeleteMessage)
                             if (MessageBox.Show("您确定执行“删除”操作吗，这将不可逆！", "警告", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes)
                                 return;
                         studentsList.Remove(NowStudentList.SelectedItem as Student);
@@ -192,11 +192,11 @@ namespace WpfApp2Practice1
                     MainMenu.Visibility = Visibility.Visible;
                     break;
                 case "O_ptions":
-                    if (isAddedClose)
+                    if (currentAccount.isAddedClose)
                         rBAddedClose_0.IsChecked = true;
                     else
                         rBAddedClose_1.IsChecked = true;
-                    switch (numberSaveMessage)
+                    switch (currentAccount.numberSaveMessage)
                     {
                         case 0:
                             rBSaveMessage_0.IsChecked = true;
@@ -208,7 +208,7 @@ namespace WpfApp2Practice1
                             rBSaveMessage_2.IsChecked = true;
                             break;
                     }
-                    switch (numberReadMessage)
+                    switch (currentAccount.numberReadMessage)
                     {
                         case 0:
                             rBReadMessage_0.IsChecked = true;
@@ -220,15 +220,15 @@ namespace WpfApp2Practice1
                             rBReadMessage_2.IsChecked = true;
                             break;
                     }
-                    if (isDeleteMessage)
+                    if (currentAccount.isDeleteMessage)
                         rBDeleteMessage_0.IsChecked = true;
                     else
                         rBDeleteMessage_1.IsChecked = true;
-                    if (isNotSavedExitMessage)
+                    if (currentAccount.isNotSavedExitMessage)
                         rBNotSavedExitMessage_0.IsChecked = true;
                     else
                         rBNotSavedExitMessage_1.IsChecked = true;
-                    if (isFullScreen)
+                    if (currentAccount.isFullScreen)
                         rBFullScreen_0.IsChecked = true;
                     else
                         rBFullScreen_1.IsChecked = true;
@@ -270,15 +270,21 @@ namespace WpfApp2Practice1
         /// </summary>
         public class Account
         {
-            private string User { get; set; }
-            private string Password { get; set; }
-            private Identity Identity { get; set; }
-            private string SaveUserFileName { get; set; }
+            public string User { get; set; }
+            public string Password { get; set; }
+            public Identity Identity { get; set; }
+            public string SaveUserFileName { get; set; }
 
-            public Account()
-            {
-                SaveUserFileName = "User_" + User + "_student_Score_Manager_List.xml";
-            }
+            #region 设置
+            public bool isAddedClose;
+            public int numberSaveMessage;
+            public int numberReadMessage;
+            public bool isDeleteMessage = true;
+            public bool isNotSavedExitMessage = true;
+            public bool isFullScreen;
+            #endregion
+
+            public Account() { }
 
             /// <summary>
             /// 正式注册账户
@@ -332,7 +338,7 @@ namespace WpfApp2Practice1
                 isSave = false;
                 StatusbarSave_Check();
 
-                if (isAddedClose)
+                if (currentAccount.isAddedClose)
                     AddPad.Visibility = Visibility.Collapsed;
             }
             else
@@ -346,7 +352,7 @@ namespace WpfApp2Practice1
 
         public void Menu_Save()
         {
-            switch (numberSaveMessage)
+            switch (currentAccount.numberSaveMessage)
             {
                 case 0:
                     if (MessageBox.Show("您确定执行“保存”操作吗，这将覆盖你之前的文件不可逆！（请注意您当前的列表成员数是否为0，并检查是否已读取文件）", "警告", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes)
@@ -374,7 +380,7 @@ namespace WpfApp2Practice1
         {
             if (File.Exists("student_Score_Manager_List.xml"))
             {
-                switch (numberReadMessage)
+                switch (currentAccount.numberReadMessage)
                 {
                     case 0:
                         if (MessageBox.Show("您确定执行“读取”操作吗，这将覆盖你当前的列表不可逆！（请注意您的文件是否需要保存）", "警告", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes)
@@ -460,7 +466,7 @@ namespace WpfApp2Practice1
 
         public void Menu_Exit()
         {
-            if (isNotSavedExitMessage && !isSave && MessageBox.Show("您真的要退出软件吗，您还有文件未保存呢！（软件每次打开默认为未保存，如果软件打开后未进行任何修改文件操作，则不用理会这条警告）", "警告", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes)
+            if (currentAccount.isNotSavedExitMessage && !isSave && MessageBox.Show("您真的要退出软件吗，您还有文件未保存呢！（软件每次打开默认为未保存，如果软件打开后未进行任何修改文件操作，则不用理会这条警告）", "警告", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes)
                 return;
             Close();
         }
@@ -525,6 +531,7 @@ namespace WpfApp2Practice1
             }
         }
 
+        #region 状态栏检测
         private void StatusbarSave_Check()
         {
             if(isSave)
@@ -538,6 +545,22 @@ namespace WpfApp2Practice1
                 statusTBIsSave.Text = "未保存";
             }
         }
+
+        private void StatusbarAccount_Check()
+        {
+            if(currentAccount.Identity == Identity.teacher)
+            {
+                statusIGAccountIdentity.Source = new BitmapImage(new Uri("/Image/teacher.jpg", UriKind.Relative));
+                statusTBAccountIdentity.Text = "老师";
+            }
+            else if(currentAccount.Identity == Identity.student)
+            {
+                statusIGAccountIdentity.Source = new BitmapImage(new Uri("/Image/student.jpg", UriKind.Relative));
+                statusTBAccountIdentity.Text = "学生";
+            }
+            statusTBAccountUser.Text = currentAccount.User;
+        }
+        #endregion
 
         private void Menu_Options_tB_Find_LostFocus(object sender, RoutedEventArgs e)
         {
@@ -553,25 +576,40 @@ namespace WpfApp2Practice1
 
         public void Button_Options_Click(object sender, RoutedEventArgs e)
         {
-            isAddedClose = (rBAddedClose_0.IsChecked == true);
+            currentAccount.isAddedClose = (rBAddedClose_0.IsChecked == true);
             if (rBSaveMessage_0.IsChecked == true)
-                numberSaveMessage = 0;
+                currentAccount.numberSaveMessage = 0;
             else if (rBSaveMessage_1.IsChecked == true)
-                numberSaveMessage = 1;
+                currentAccount.numberSaveMessage = 1;
             else
-                numberSaveMessage = 2;
+                currentAccount.numberSaveMessage = 2;
             if (rBReadMessage_0.IsChecked == true)
-                numberReadMessage = 0;
+                currentAccount.numberReadMessage = 0;
             else if (rBReadMessage_1.IsChecked == true)
-                numberReadMessage = 1;
+                currentAccount.numberReadMessage = 1;
             else
-                numberReadMessage = 2;
-            isDeleteMessage = (rBDeleteMessage_0.IsChecked == true);
-            isNotSavedExitMessage = (rBNotSavedExitMessage_0.IsChecked == true);
-            isFullScreen = (rBFullScreen_0.IsChecked == true);
+                currentAccount.numberReadMessage = 2;
+            currentAccount.isDeleteMessage = (rBDeleteMessage_0.IsChecked == true);
+            currentAccount.isNotSavedExitMessage = (rBNotSavedExitMessage_0.IsChecked == true);
+            currentAccount.isFullScreen = (rBFullScreen_0.IsChecked == true);
+
+            #region 更新账户数据
+            dicAccount[currentAccount.User].isAddedClose = currentAccount.isAddedClose;
+            dicAccount[currentAccount.User].numberSaveMessage = currentAccount.numberSaveMessage;
+            dicAccount[currentAccount.User].numberReadMessage = currentAccount.numberReadMessage;
+            dicAccount[currentAccount.User].isDeleteMessage = currentAccount.isDeleteMessage;
+            dicAccount[currentAccount.User].isNotSavedExitMessage = currentAccount.isNotSavedExitMessage;
+            dicAccount[currentAccount.User].isFullScreen = currentAccount.isFullScreen;
+            using (FileStream write = new FileStream("student_Score_Manager_Accounts_List.xml", FileMode.Create))
+            {
+                XmlSerializer serializer = new XmlSerializer(typeof(SerializableDictionary<string, Account>));
+                serializer.Serialize(write, dicAccount);
+            }
+            #endregion
 
             OptionsPad.Visibility = Visibility.Collapsed;
             //该界面暂时不考虑怎么关闭
+
         }
 
         private void CBLogin_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -591,7 +629,13 @@ namespace WpfApp2Practice1
                     currentAccount = dicAccount[tBoxLoginUsers.Text];
                     tBoxLoginUsers.Text = pBoxLoginPassword.Password = "";
                     cBLoginIdentity.SelectedIndex = 0;
-                    MessageBox.Show("登陆成功");
+                    LoginPad.Visibility = Visibility.Collapsed;
+                    MainMenu.Visibility = Visibility.Visible;
+                    if (currentAccount.isFullScreen)
+                        WindowState = WindowState.Maximized;
+                    else
+                        WindowState = WindowState.Normal;
+                    StatusbarAccount_Check();
                     return;
                 }
             }
@@ -623,6 +667,20 @@ namespace WpfApp2Practice1
             if (sumRegisterOK[0] && sumRegisterOK[1] && sumRegisterOK[2])
             {
                 dicAccount.Add(tBoxRegisterUsers.Text, new Account(tBoxRegisterUsers.Text, pBoxRegisterPassword.Password, cBRegisterIdentity.SelectedIndex == 0 ? Identity.teacher : Identity.student));
+                dicAccount[tBoxRegisterUsers.Text].VerifyUser(pBoxRegisterPassword.Password, Identity.teacher);
+
+                using (FileStream write = new FileStream("student_Score_Manager_Accounts_List.xml", FileMode.Create))
+                {
+                    XmlSerializer serializer = new XmlSerializer(typeof(SerializableDictionary<string, Account>));
+                    serializer.Serialize(write, dicAccount);
+                }
+                //创建个人仓库
+                XmlSerializer item = new XmlSerializer(typeof(ObservableCollection<Student>));
+                using (Stream write = new FileStream(dicAccount[tBoxRegisterUsers.Text].Return_SaveUserFileName(), FileMode.Create))
+                {
+                    item.Serialize(write, studentsList);
+                }
+
                 MessageBox.Show("注册成功 ");
                 tBoxRegisterUsers.Text = pBoxRegisterPassword.Password = pBoxRegisterPasswordAgain.Password = "";
                 cBRegisterIdentity.SelectedIndex = 0;
