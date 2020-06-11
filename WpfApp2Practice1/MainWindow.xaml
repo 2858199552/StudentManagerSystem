@@ -41,8 +41,8 @@
                     <Label FontSize="16">密码：</Label>
                     <PasswordBox Name="pBoxLoginPassword" MaxWidth="120"/>
                     <StackPanel Orientation="Horizontal" Margin="10" HorizontalAlignment="Center">
-                        <CheckBox Foreground="Silver">自动登录</CheckBox>
-                        <CheckBox Foreground="Silver">记住密码</CheckBox>
+                        <CheckBox IsEnabled="False" Foreground="Silver">自动登录</CheckBox>
+                        <CheckBox IsEnabled="False" Foreground="Silver">记住密码</CheckBox>
                     </StackPanel>
                     <Button Name="Button_Login" Margin="100,10" FontSize="25" Background="AliceBlue" Click="Button_Login_Click">登陆</Button>
                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
@@ -93,8 +93,8 @@
                         <Ellipse Name="ellipseRegister_2" Width="12" Height="12" Fill="Red" Margin="5,0" VerticalAlignment="Center"/>
                         <TextBlock VerticalAlignment="Center">由数字、字母或常见字符组成，长度为10-15位</TextBlock>
                     </StackPanel>
-                    <Button Name="Button_Register" Click="Button_Register_Click" Background="AliceBlue" FontSize="20" HorizontalAlignment="Center" Margin="10">注册</Button>
-                    <CheckBox Foreground="Silver" Margin="10,0">我已阅读并同意相关服务条款和隐私政策</CheckBox>
+                    <Button Name="Button_Register" Click="Button_Register_Click" IsEnabled="False" Background="AliceBlue" FontSize="20" HorizontalAlignment="Center" Margin="10">注册</Button>
+                    <CheckBox Name="CheckBox_Register_ReadRule" Foreground="Silver" Margin="10,0" Click="CheckBox_Register_ReadRule_Click">我已阅读并同意相关服务条款和隐私政策</CheckBox>
                     <Button Name="Button_Register_Go_LoginPad" Click="Button_Go_RegisterAndLoginPad_Click"  HorizontalAlignment="Center" Margin="10">返回</Button>
                 </StackPanel>
             </Border>
@@ -383,7 +383,7 @@
                     </MenuItem.ToolTip>
                     <MenuItem Header="T_hank You" Click="Top_Click">
                         <MenuItem.Icon>
-                            <Image Source="/WpfApp2Practice1;component/Image/smile.jpg" Margin="0,0,5,0" />
+                            <Image Source="/WpfApp2Practice1;component/Image/smile.jpg" />
                         </MenuItem.Icon>
                         <MenuItem.ToolTip>
                             <TextBlock FontWeight="Bold" FontSize="14">感谢使用</TextBlock>
@@ -392,7 +392,7 @@
                     <Separator />
                     <MenuItem Header="H_ome" Click="Top_Click">
                         <MenuItem.Icon>
-                            <Image Source="/WpfApp2Practice1;component/Image/home.jpg" Margin="0,0,5,0" />
+                            <Image Source="/WpfApp2Practice1;component/Image/home.jpg" />
                         </MenuItem.Icon>
                         <MenuItem.ToolTip>
                             <TextBlock FontWeight="Bold" FontSize="14">回到主界面</TextBlock>
@@ -400,10 +400,18 @@
                     </MenuItem>
                     <MenuItem Header="O_ptions" Click="Top_Click">
                         <MenuItem.Icon>
-                            <Image Source="/WpfApp2Practice1;component/Image/gear.jpg" Margin="0,0,5,0" />
+                            <Image Source="/WpfApp2Practice1;component/Image/gear.jpg" />
                         </MenuItem.Icon>
                         <MenuItem.ToolTip>
                             <TextBlock FontWeight="Bold" FontSize="14">选项</TextBlock>
+                        </MenuItem.ToolTip>
+                    </MenuItem>
+                    <MenuItem Header="_Get score list" Click="Top_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/WpfApp2Practice1;component/Image/data.jpg" />
+                        </MenuItem.Icon>
+                        <MenuItem.ToolTip>
+                            <TextBlock FontWeight="Bold" FontSize="14">获取成绩单</TextBlock>
                         </MenuItem.ToolTip>
                     </MenuItem>
                 </MenuItem>
@@ -447,6 +455,11 @@
             </StatusBar>
             <StackPanel>
                 <TextBox Name="topTBFind" Width="80" HorizontalAlignment="Left" Margin="10,5,0,0" Visibility="Collapsed" TextChanged="TopTBFind_TextChanged"/>
+                <StackPanel Name="topStackPnl_GetScoreList" Orientation="Horizontal"  Visibility="Collapsed">
+                    <TextBlock Margin="5">输入老师账号：</TextBlock>
+                    <TextBox Name="topTBFind_GetScoreList" Width="80" Margin="10,5" />
+                    <Button Name="topBTFind_GetScoreList" VerticalAlignment="Center" Click="TopBTFind_GetScoreList_Click">获取</Button>
+                </StackPanel>
                 <ListView Name="NowStudentList" Margin="10" ItemsSource="{Binding Source={StaticResource studentsListViewSource}}">
                     <ListView.Resources>
                         <Style TargetType="GridViewColumnHeader">

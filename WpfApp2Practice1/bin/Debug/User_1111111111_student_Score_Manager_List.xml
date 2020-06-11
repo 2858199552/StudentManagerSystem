@@ -1,2 +1,36 @@
 <?xml version="1.0"?>
-<ArrayOfStudent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+<ArrayOfStudent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Student>
+    <Name>3</Name>
+    <StuNo>3</StuNo>
+    <Score_0>3</Score_0>
+    <Score_1>3</Score_1>
+    <Score_2>3</Score_2>
+    <Score_3>3</Score_3>
+    <Score_4>3</Score_4>
+    <Score_5>3</Score_5>
+    <Score_6>3</Score_6>
+  </Student>
+  <Student>
+    <Name>1</Name>
+    <StuNo>1</StuNo>
+    <Score_0>11</Score_0>
+    <Score_1>1</Score_1>
+    <Score_2>1</Score_2>
+    <Score_3>1</Score_3>
+    <Score_4>1</Score_4>
+    <Score_5>1</Score_5>
+    <Score_6>1</Score_6>
+  </Student>
+  <Student>
+    <Name>2</Name>
+    <StuNo>2</StuNo>
+    <Score_0>2</Score_0>
+    <Score_1>2</Score_1>
+    <Score_2>2</Score_2>
+    <Score_3>2</Score_3>
+    <Score_4>2</Score_4>
+    <Score_5>2</Score_5>
+    <Score_6>2</Score_6>
+  </Student>
+</ArrayOfStudent>

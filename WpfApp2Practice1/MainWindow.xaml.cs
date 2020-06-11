@@ -234,6 +234,15 @@ namespace WpfApp2Practice1
                         rBFullScreen_1.IsChecked = true;
                     OptionsPad.Visibility = Visibility.Visible;
                     break;
+                case "_Get score list":
+                    if (topStackPnl_GetScoreList.Visibility == Visibility.Visible)
+                    {
+                        topTBFind_GetScoreList.Text = "";
+                        topStackPnl_GetScoreList.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                        topStackPnl_GetScoreList.Visibility = Visibility.Visible;
+                    break;
             }
         }
 
@@ -309,6 +318,15 @@ namespace WpfApp2Practice1
             {
                 return (password == Password) && (identity == Identity);
             }
+
+            /// <summary>
+            /// 该函数具有一定泄露隐私（用户身份）风险
+            /// </summary>
+            /// <returns></returns>
+            public Identity Return_Identity()
+            {
+                return Identity;
+            }
         }
 
         public void Button_AddStu_Click(object sender, RoutedEventArgs e)
@@ -378,7 +396,7 @@ namespace WpfApp2Practice1
 
         public void Menu_Load()
         {
-            if (File.Exists("student_Score_Manager_List.xml"))
+            if (File.Exists(currentAccount.Return_SaveUserFileName()))
             {
                 switch (currentAccount.numberReadMessage)
                 {
@@ -400,7 +418,7 @@ namespace WpfApp2Practice1
                 {
                     List<Student> tempList = (List<Student>)serializer.Deserialize(reader);
                     studentsList.Clear();
-                    foreach (var item in tempList.OrderByDescending(x => x.Sumscore)) 
+                    foreach (var item in tempList.OrderByDescending(x => x.Sumscore))
                     {
                         studentsList.Add(item);
                     }
@@ -557,6 +575,16 @@ namespace WpfApp2Practice1
             {
                 statusIGAccountIdentity.Source = new BitmapImage(new Uri("/Image/student.jpg", UriKind.Relative));
                 statusTBAccountIdentity.Text = "学生";
+                #region 禁用权限
+                btnMainAdd.IsEnabled = false;
+                btnMainDelete.IsEnabled = false;
+                btnMainModification.IsEnabled = false;
+                foreach (var item in (pnlStudentList.Children[0] as Menu).Items)
+                {
+                    if ((item as MenuItem).Header.ToString() == "_Add" || (item as MenuItem).Header.ToString() == "_Modification" || (item as MenuItem).Header.ToString() == "_Delete")
+                        (item as MenuItem).IsEnabled = false;
+                }
+                #endregion
             }
             statusTBAccountUser.Text = currentAccount.User;
         }
@@ -612,6 +640,7 @@ namespace WpfApp2Practice1
 
         }
 
+        #region 账户管理操作
         private void CBLogin_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if ((sender as ComboBox).SelectedIndex == 0)
@@ -636,6 +665,7 @@ namespace WpfApp2Practice1
                     else
                         WindowState = WindowState.Normal;
                     StatusbarAccount_Check();
+                    
                     return;
                 }
             }
@@ -655,6 +685,8 @@ namespace WpfApp2Practice1
             {
                 tBoxRegisterUsers.Text = pBoxRegisterPassword.Password = pBoxRegisterPasswordAgain.Password = "";
                 cBRegisterIdentity.SelectedIndex = 0;
+                //CheckBox_Register_ReadRule.IsChecked = false;
+                Button_Register.IsEnabled = false;
                 LoginPad.Visibility = Visibility.Visible;
                 RegisterPad.Visibility = Visibility.Collapsed;
             }
@@ -735,5 +767,44 @@ namespace WpfApp2Practice1
                 sumRegisterOK[2] = false;
             }
         }
+
+        private void CheckBox_Register_ReadRule_Click(object sender, RoutedEventArgs e)
+        {
+            if (CheckBox_Register_ReadRule.IsChecked == true)
+            {
+                Button_Register.IsEnabled = true;
+                UserAgreement userAgreement = new UserAgreement();
+                userAgreement.Show();
+                userAgreement.Button_UserAgeement_OK.Click += (q, w) => { userAgreement.Close(); };
+                userAgreement.Button_UserAgeement_Cancel.Click += (q, w) => { userAgreement.Close(); CheckBox_Register_ReadRule.IsChecked = false; Button_Register.IsEnabled = false; };
+            }
+            else
+                Button_Register.IsEnabled = false;
+        }
+        #endregion
+
+        private void TopBTFind_GetScoreList_Click(object sender, RoutedEventArgs e)
+        {
+            if (dicAccount.ContainsKey(topTBFind_GetScoreList.Text) && dicAccount[topTBFind_GetScoreList.Text].Return_Identity() == Identity.teacher)
+            {
+                XmlSerializer serializer = new XmlSerializer(typeof(List<Student>));
+                using (Stream reader = new FileStream(dicAccount[topTBFind_GetScoreList.Text].Return_SaveUserFileName(), FileMode.Open))
+                {
+                    List<Student> tempList = (List<Student>)serializer.Deserialize(reader);
+                    studentsList.Clear();
+                    foreach (var item in tempList.OrderByDescending(x => x.Sumscore))
+                    {
+                        studentsList.Add(item);
+                    }
+                }
+                if (((pnlStudentList.Children[0] as Menu).Items[2] as MenuItem).Header.ToString() == "S_ave")
+                    ((pnlStudentList.Children[0] as Menu).Items[2] as MenuItem).IsEnabled = false;
+                else
+                    MessageBox.Show("禁用GetScoreList:(head)S_ave失败");
+            }
+            else
+                MessageBox.Show("获取失败，请检查账号正确性或是非老师账号");
+        }
+
     }
 }
