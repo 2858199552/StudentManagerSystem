@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         x:Name="window"
         xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
-        Title="学生成绩管理系统" Height="540" Width="960" Icon="/WpfApp2Practice1;component/Image/science.jpg">
+        Title="学生成绩管理系统" Height="540" Width="960" Icon="/WpfApp2Practice1;component/Image/science.jpg" ContentRendered="Window_ContentRendered">
     <Window.Resources>
         <CollectionViewSource Source="{Binding ElementName=window, Path=studentsList}" x:Key="studentsListViewSource" Filter="CollectionViewSource_Filter" >
             <CollectionViewSource.SortDescriptions>
@@ -16,7 +16,90 @@
         </CollectionViewSource>
     </Window.Resources>
     <Grid>
-        <Grid Name="MainMenu">
+        <StackPanel Name="LoginPad" Visibility="Visible">
+            <TextBlock FontSize="35" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,40">学生成绩管理系统</TextBlock>
+            <Border BorderThickness="2" BorderBrush="AliceBlue" Height="350" Width="450">
+                <StackPanel>
+                    <TextBlock FontSize="25" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,30,0,0">登陆</TextBlock>
+                    <Label FontSize="16">身份：</Label>
+                    <ComboBox Name="cBLoginIdentity" MaxWidth="120" SelectionChanged="CBLogin_SelectionChanged">
+                        <ComboBoxItem IsSelected="True">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="/WpfApp2Practice1;component/Image/teacher.jpg" Width="16" Height="16" />
+                                <TextBlock>老师</TextBlock>
+                            </StackPanel>
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="/WpfApp2Practice1;component/Image/student.jpg" Width="16" Height="16" />
+                                <TextBlock>学生</TextBlock>
+                            </StackPanel>
+                        </ComboBoxItem>
+                    </ComboBox>
+                    <Label FontSize="16">用户名：</Label>
+                    <TextBox Name="tBoxLoginUsers" MaxWidth="120"/>
+                    <Label FontSize="16">密码：</Label>
+                    <PasswordBox Name="pBoxLoginPassword" MaxWidth="120"/>
+                    <StackPanel Orientation="Horizontal" Margin="10" HorizontalAlignment="Center">
+                        <CheckBox IsEnabled="False" Foreground="Silver">自动登录</CheckBox>
+                        <CheckBox IsEnabled="False" Foreground="Silver">记住密码</CheckBox>
+                    </StackPanel>
+                    <Button Name="Button_Login" Margin="100,10" FontSize="25" Background="AliceBlue" Click="Button_Login_Click">登陆</Button>
+                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                        <Button Name="Button_LoginPad_Exit" Margin="150,10" Width="50" VerticalAlignment="Bottom" Click="Button_Go_RegisterAndLoginPad_Click">退出</Button>
+                        <Button Name="Button_LoginPad_Go_RegisterPad" Margin="150,10" Width="50" VerticalAlignment="Bottom" Click="Button_Go_RegisterAndLoginPad_Click">注册</Button>
+                    </StackPanel>
+
+                </StackPanel>
+            </Border>
+        </StackPanel>
+        <StackPanel Name="RegisterPad" Visibility="Collapsed">
+            <TextBlock FontSize="35" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,40">学生成绩管理系统</TextBlock>
+            <Border BorderThickness="2" BorderBrush="AliceBlue" Height="380" Width="500">
+                <StackPanel>
+                    <TextBlock FontSize="25" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,30,0,0">注册</TextBlock>
+                    <StackPanel Orientation="Horizontal" Margin="10">
+                        <Label FontWeight="Bold" VerticalAlignment="Center">身份：</Label>
+                        <ComboBox Name="cBRegisterIdentity" MaxWidth="120" VerticalAlignment="Center">
+                            <ComboBoxItem IsSelected="True">
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="/WpfApp2Practice1;component/Image/teacher.jpg" Width="16" Height="16" />
+                                    <TextBlock>老师</TextBlock>
+                                </StackPanel>
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="/WpfApp2Practice1;component/Image/student.jpg" Width="16" Height="16" />
+                                    <TextBlock>学生</TextBlock>
+                                </StackPanel>
+                            </ComboBoxItem>
+                        </ComboBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="10">
+                        <Label FontWeight="Bold" VerticalAlignment="Center">用户名：</Label>
+                        <TextBox Name="tBoxRegisterUsers" Width="120" VerticalAlignment="Center" TextChanged="TBoxRegisterUsers_TextChanged"/>
+                        <Ellipse Name="ellipseRegister_0" Width="12" Height="12" Fill="Red" Margin="5,0" VerticalAlignment="Center"/>
+                        <TextBlock VerticalAlignment="Center">由数字或字母组成，长度为10</TextBlock>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="10">
+                        <Label FontWeight="Bold" VerticalAlignment="Center">密码：</Label>
+                        <PasswordBox Name="pBoxRegisterPassword" Width="120" VerticalAlignment="Center" PasswordChanged="PBoxRegisterPassword_PasswordChanged"/>
+                        <Ellipse Name="ellipseRegister_1" Width="12" Height="12" Fill="Red" Margin="5,0" VerticalAlignment="Center"/>
+                        <TextBlock VerticalAlignment="Center">由数字、字母或常见字符组成，长度为10-15位</TextBlock>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="10">
+                        <Label FontWeight="Bold" VerticalAlignment="Center">确认密码：</Label>
+                        <PasswordBox Name="pBoxRegisterPasswordAgain" Width="120" VerticalAlignment="Center" PasswordChanged="PBoxRegisterPassword_PasswordChanged"/>
+                        <Ellipse Name="ellipseRegister_2" Width="12" Height="12" Fill="Red" Margin="5,0" VerticalAlignment="Center"/>
+                        <TextBlock VerticalAlignment="Center">由数字、字母或常见字符组成，长度为10-15位</TextBlock>
+                    </StackPanel>
+                    <Button Name="Button_Register" Click="Button_Register_Click" IsEnabled="False" Background="AliceBlue" FontSize="20" HorizontalAlignment="Center" Margin="10">注册</Button>
+                    <CheckBox Name="CheckBox_Register_ReadRule" Foreground="Silver" Margin="10,0" Click="CheckBox_Register_ReadRule_Click">我已阅读并同意相关服务条款和隐私政策</CheckBox>
+                    <Button Name="Button_Register_Go_LoginPad" Click="Button_Go_RegisterAndLoginPad_Click"  HorizontalAlignment="Center" Margin="10">返回</Button>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+        <Grid Name="MainMenu" Visibility="Collapsed">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -300,7 +383,7 @@
                     </MenuItem.ToolTip>
                     <MenuItem Header="T_hank You" Click="Top_Click">
                         <MenuItem.Icon>
-                            <Image Source="/WpfApp2Practice1;component/Image/smile.jpg" Margin="0,0,5,0" />
+                            <Image Source="/WpfApp2Practice1;component/Image/smile.jpg" />
                         </MenuItem.Icon>
                         <MenuItem.ToolTip>
                             <TextBlock FontWeight="Bold" FontSize="14">感谢使用</TextBlock>
@@ -309,10 +392,26 @@
                     <Separator />
                     <MenuItem Header="H_ome" Click="Top_Click">
                         <MenuItem.Icon>
-                            <Image Source="/WpfApp2Practice1;component/Image/home.jpg" Margin="0,0,5,0" />
+                            <Image Source="/WpfApp2Practice1;component/Image/home.jpg" />
                         </MenuItem.Icon>
                         <MenuItem.ToolTip>
                             <TextBlock FontWeight="Bold" FontSize="14">回到主界面</TextBlock>
+                        </MenuItem.ToolTip>
+                    </MenuItem>
+                    <MenuItem Header="O_ptions" Click="Top_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/WpfApp2Practice1;component/Image/gear.jpg" />
+                        </MenuItem.Icon>
+                        <MenuItem.ToolTip>
+                            <TextBlock FontWeight="Bold" FontSize="14">选项</TextBlock>
+                        </MenuItem.ToolTip>
+                    </MenuItem>
+                    <MenuItem Header="_Get score list" Click="Top_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/WpfApp2Practice1;component/Image/data.jpg" />
+                        </MenuItem.Icon>
+                        <MenuItem.ToolTip>
+                            <TextBlock FontWeight="Bold" FontSize="14">获取成绩单</TextBlock>
                         </MenuItem.ToolTip>
                     </MenuItem>
                 </MenuItem>
@@ -323,9 +422,11 @@
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="100" />
-                                <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="100" />
                             </Grid.ColumnDefinitions>
                         </Grid>
@@ -340,6 +441,13 @@
                 </StatusBarItem>
                 <StatusBarItem Grid.Column="3">
                     <WrapPanel>
+                        <Image Name="statusIGAccountIdentity" Width="16" Height="16"/>
+                        <TextBlock Name="statusTBAccountIdentity" FontSize="12" Margin="5,0" VerticalAlignment="Center"/>
+                        <TextBlock Name="statusTBAccountUser" FontSize="12" Margin="5,0" VerticalAlignment="Center" />
+                    </WrapPanel>
+                </StatusBarItem>
+                <StatusBarItem Grid.Column="5">
+                    <WrapPanel>
                         <Image Name="statusIGIsSave" Width="16" Height="16"/>
                         <TextBlock Name="statusTBIsSave" FontSize="12" Margin="5,0" VerticalAlignment="Center"/>
                     </WrapPanel>
@@ -347,6 +455,11 @@
             </StatusBar>
             <StackPanel>
                 <TextBox Name="topTBFind" Width="80" HorizontalAlignment="Left" Margin="10,5,0,0" Visibility="Collapsed" TextChanged="TopTBFind_TextChanged"/>
+                <StackPanel Name="topStackPnl_GetScoreList" Orientation="Horizontal"  Visibility="Collapsed">
+                    <TextBlock Margin="5">输入老师账号：</TextBlock>
+                    <TextBox Name="topTBFind_GetScoreList" Width="80" Margin="10,5" />
+                    <Button Name="topBTFind_GetScoreList" VerticalAlignment="Center" Click="TopBTFind_GetScoreList_Click">获取</Button>
+                </StackPanel>
                 <ListView Name="NowStudentList" Margin="10" ItemsSource="{Binding Source={StaticResource studentsListViewSource}}">
                     <ListView.Resources>
                         <Style TargetType="GridViewColumnHeader">
@@ -436,6 +549,7 @@
                     <StackPanel Orientation="Horizontal">
                         <Image Source="/WpfApp2Practice1;component/Image/write.jpg" Width="16" Height="16" Margin="10,0"/>
                         <TextBlock>添加学生信息</TextBlock>
+                        <TextBlock FontSize="12" Foreground="Silver" VerticalAlignment="Bottom">(Name:姓名,StuNo:学号,Score1:分数1...)</TextBlock>
                     </StackPanel>
                 </Label>
                 <WrapPanel HorizontalAlignment="Center">
@@ -578,6 +692,51 @@
                     </ScrollViewer>
                 </Border>
                 <Button Margin="10" Width="120" Height="30" Background="White" Click="Button_Modification_Click">修改</Button>
+                <Button Width="100" Background="White" Click="Pad_Button_Return_Click">返回</Button>
+            </StackPanel>
+        </Border>
+        <Border Name="OptionsPad" Width="450" Height="780" BorderBrush="AliceBlue" BorderThickness="2" Background="White" Visibility="Collapsed" Panel.ZIndex="2">
+            <StackPanel>
+                <Label>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/WpfApp2Practice1;component/Image/gear.jpg" Width="16" Height="16" Margin="10,0"/>
+                        <TextBlock>设置</TextBlock>
+                    </StackPanel>
+                </Label>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBox Name="Menu_Options_tB_Find" MinWidth="80" Foreground="Silver" HorizontalAlignment="Left" Margin="5" LostFocus="Menu_Options_tB_Find_LostFocus" GotFocus="Menu_Options_tB_Find_GotFocus">搜索选项（暂时没用）</TextBox>
+                    <Border BorderBrush="AntiqueWhite" BorderThickness="2" CornerRadius="3" HorizontalAlignment="Center" Margin="10" Grid.Row="1" MaxHeight="300" MinWidth="350">
+                        <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto" >
+                            <StackPanel>
+                                <Label FontWeight="Bold">“添加”后自动退出添加界面</Label>
+                                <RadioButton Name="rBAddedClose_0" GroupName="addedClose" Margin="10,0,0,0">是</RadioButton>
+                                <RadioButton Name="rBAddedClose_1" GroupName="addedClose" IsChecked="True" Margin="10,0,0,0">否</RadioButton>
+                                <Label FontWeight="Bold">执行"Save"（保存）前是否出现警告消息</Label>
+                                <RadioButton Name="rBSaveMessage_0" GroupName="saveMessage" Margin="10,0,0,0" IsChecked="True">是</RadioButton>
+                                <RadioButton Name="rBSaveMessage_1" GroupName="saveMessage" Margin="10,0,0,0">否</RadioButton>
+                                <RadioButton Name="rBSaveMessage_2" GroupName="saveMessage" Margin="10,0,0,0">仅在当前列表为空时</RadioButton>
+                                <Label FontWeight="Bold">执行"Read"（读取）前是否出现警告消息</Label>
+                                <RadioButton Name="rBReadMessage_0" GroupName="readMessage" Margin="10,0,0,0" IsChecked="True">是</RadioButton>
+                                <RadioButton Name="rBReadMessage_1" GroupName="readMessage" Margin="10,0,0,0">否</RadioButton>
+                                <RadioButton Name="rBReadMessage_2" GroupName="readMessage" Margin="10,0,0,0">仅在文件未保存时</RadioButton>
+                                <Label FontWeight="Bold">执行"Delete"（删除）前是否出现警告消息</Label>
+                                <RadioButton Name="rBDeleteMessage_0" GroupName="deleteMessage" Margin="10,0,0,0" IsChecked="True">是</RadioButton>
+                                <RadioButton Name="rBDeleteMessage_1" GroupName="deleteMessage" Margin="10,0,0,0">否</RadioButton>
+                                <Label FontWeight="Bold">文件未保存便退出软件时出现警告</Label>
+                                <RadioButton Name="rBNotSavedExitMessage_0" GroupName="notSavedExitMessage" Margin="10,0,0,0" IsChecked="True">是</RadioButton>
+                                <RadioButton Name="rBNotSavedExitMessage_1" GroupName="notSavedExitMessage" Margin="10,0,0,0">否</RadioButton>
+                                <Label FontWeight="Bold">启动时是否全屏：</Label>
+                                <RadioButton Name="rBFullScreen_0" GroupName="fullScreen" Margin="10,0,0,0">是</RadioButton>
+                                <RadioButton Name="rBFullScreen_1" GroupName="fullScreen" IsChecked="True" Margin="10,0,0,0">否</RadioButton>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Border>
+                </Grid>
+                <Button Margin="10" Width="120" Height="30" Background="White" Click="Button_Options_Click">确认</Button>
                 <Button Width="100" Background="White" Click="Pad_Button_Return_Click">返回</Button>
             </StackPanel>
         </Border>
