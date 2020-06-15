@@ -76,4 +76,104 @@
       </Account>
     </value>
   </SerializableDictionary>
+  <SerializableDictionary>
+    <key>
+      <string>1222222222</string>
+    </key>
+    <value>
+      <Account xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <isAddedClose>false</isAddedClose>
+        <numberSaveMessage>0</numberSaveMessage>
+        <numberReadMessage>0</numberReadMessage>
+        <isDeleteMessage>true</isDeleteMessage>
+        <isNotSavedExitMessage>true</isNotSavedExitMessage>
+        <isFullScreen>false</isFullScreen>
+        <User>1222222222</User>
+        <Password>1222222222</Password>
+        <Identity>teacher</Identity>
+        <SaveUserFileName>User_1222222222_student_Score_Manager_List.xml</SaveUserFileName>
+        <IdManager>12222222</IdManager>
+      </Account>
+    </value>
+  </SerializableDictionary>
+  <SerializableDictionary>
+    <key>
+      <string>1212222222</string>
+    </key>
+    <value>
+      <Account xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <isAddedClose>false</isAddedClose>
+        <numberSaveMessage>0</numberSaveMessage>
+        <numberReadMessage>0</numberReadMessage>
+        <isDeleteMessage>true</isDeleteMessage>
+        <isNotSavedExitMessage>true</isNotSavedExitMessage>
+        <isFullScreen>false</isFullScreen>
+        <User>1212222222</User>
+        <Password>1212222222</Password>
+        <Identity>student</Identity>
+        <SaveUserFileName>User_1212222222_student_Score_Manager_List.xml</SaveUserFileName>
+        <IdManager>12222222</IdManager>
+      </Account>
+    </value>
+  </SerializableDictionary>
+  <SerializableDictionary>
+    <key>
+      <string>2334444444</string>
+    </key>
+    <value>
+      <Account xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <isAddedClose>false</isAddedClose>
+        <numberSaveMessage>0</numberSaveMessage>
+        <numberReadMessage>0</numberReadMessage>
+        <isDeleteMessage>true</isDeleteMessage>
+        <isNotSavedExitMessage>true</isNotSavedExitMessage>
+        <isFullScreen>false</isFullScreen>
+        <User>2334444444</User>
+        <Password>4444444444</Password>
+        <Identity>teacher</Identity>
+        <SaveUserFileName>User_2334444444_student_Score_Manager_List.xml</SaveUserFileName>
+        <IdManager>12222222</IdManager>
+      </Account>
+    </value>
+  </SerializableDictionary>
+  <SerializableDictionary>
+    <key>
+      <string>7777777777</string>
+    </key>
+    <value>
+      <Account xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <isAddedClose>false</isAddedClose>
+        <numberSaveMessage>0</numberSaveMessage>
+        <numberReadMessage>0</numberReadMessage>
+        <isDeleteMessage>true</isDeleteMessage>
+        <isNotSavedExitMessage>true</isNotSavedExitMessage>
+        <isFullScreen>false</isFullScreen>
+        <User>7777777777</User>
+        <Password>7777777777</Password>
+        <Identity>teacher</Identity>
+        <SaveUserFileName>User_7777777777_student_Score_Manager_List.xml</SaveUserFileName>
+        <IdManager>###10001</IdManager>
+      </Account>
+    </value>
+  </SerializableDictionary>
+  <SerializableDictionary>
+    <key>
+      <string>8888888888</string>
+    </key>
+    <value>
+      <Account xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <isAddedClose>false</isAddedClose>
+        <numberSaveMessage>0</numberSaveMessage>
+        <numberReadMessage>0</numberReadMessage>
+        <isDeleteMessage>true</isDeleteMessage>
+        <isNotSavedExitMessage>true</isNotSavedExitMessage>
+        <isFullScreen>false</isFullScreen>
+        <User>8888888888</User>
+        <Password>8888888888</Password>
+        <Identity>student</Identity>
+        <SaveUserFileName>User_8888888888_student_Score_Manager_List.xml</SaveUserFileName>
+        <IdManager>###10001</IdManager>
+      </Account>
+    </value>
+  </SerializableDictionary>
 </SerializableDictionaryOfStringAccount>

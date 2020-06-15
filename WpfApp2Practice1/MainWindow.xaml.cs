@@ -243,6 +243,10 @@ namespace WpfApp2Practice1
                     else
                         topStackPnl_GetScoreList.Visibility = Visibility.Visible;
                     break;
+                case "_SQL Server":
+                    SQLServerPad_ShowChangeRow.Visibility = Visibility.Collapsed;
+                    SQLServerPad.Visibility = Visibility.Visible;
+                    break;
             }
         }
 
@@ -283,6 +287,7 @@ namespace WpfApp2Practice1
             public string Password { get; set; }
             public Identity Identity { get; set; }
             public string SaveUserFileName { get; set; }
+            public string IdManager { get; set; }
 
             #region 设置
             public bool isAddedClose;
@@ -301,12 +306,13 @@ namespace WpfApp2Practice1
             /// <param name="user">用户名</param>
             /// <param name="password">密码</param>
             /// <param name="identity">用户身份</param>
-            public Account(string user,string password,Identity identity)
+            public Account(string user, string password, Identity identity, string idManager)
             {
                 User = user;
                 Password = password;
                 Identity = identity;
                 SaveUserFileName = "User_" + User + "_student_Score_Manager_List.xml";
+                IdManager = idManager;
             }
 
             public string Return_SaveUserFileName()
@@ -314,9 +320,9 @@ namespace WpfApp2Practice1
                 return SaveUserFileName;
             }
 
-            public bool VerifyUser(string password, Identity identity)
+            public bool VerifyUser(string password, Identity identity, string idManager)
             {
-                return (password == Password) && (identity == Identity);
+                return (password == Password) && (identity == Identity) && (idManager == IdManager);
             }
 
             /// <summary>
@@ -575,14 +581,20 @@ namespace WpfApp2Practice1
             {
                 statusIGAccountIdentity.Source = new BitmapImage(new Uri("/Image/student.jpg", UriKind.Relative));
                 statusTBAccountIdentity.Text = "学生";
+
                 #region 禁用权限
                 btnMainAdd.IsEnabled = false;
                 btnMainDelete.IsEnabled = false;
                 btnMainModification.IsEnabled = false;
+                //以下的循环判断进行效率较低
                 foreach (var item in (pnlStudentList.Children[0] as Menu).Items)
                 {
                     if ((item as MenuItem).Header.ToString() == "_Add" || (item as MenuItem).Header.ToString() == "_Modification" || (item as MenuItem).Header.ToString() == "_Delete")
                         (item as MenuItem).IsEnabled = false;
+                    else if ((item as MenuItem).Header.ToString() == "E_xpand" && ((item as MenuItem).Items[5] as MenuItem).Header.ToString() == "_SQL Server")
+                    {
+                        ((item as MenuItem).Items[5] as MenuItem).IsEnabled = false;
+                    }
                 }
                 #endregion
             }
@@ -653,10 +665,10 @@ namespace WpfApp2Practice1
         {
             if (dicAccount.ContainsKey(tBoxLoginUsers.Text))
             {
-                if (dicAccount[tBoxLoginUsers.Text].VerifyUser(pBoxLoginPassword.Password, identity))
+                if (dicAccount[tBoxLoginUsers.Text].VerifyUser(pBoxLoginPassword.Password, identity, tBoxLoginIdManager.Text))
                 {
                     currentAccount = dicAccount[tBoxLoginUsers.Text];
-                    tBoxLoginUsers.Text = pBoxLoginPassword.Password = "";
+                    tBoxLoginUsers.Text = pBoxLoginPassword.Password = tBoxLoginIdManager.Text = "";
                     cBLoginIdentity.SelectedIndex = 0;
                     LoginPad.Visibility = Visibility.Collapsed;
                     MainMenu.Visibility = Visibility.Visible;
@@ -676,16 +688,16 @@ namespace WpfApp2Practice1
         {
             if ((sender as Button).Name == "Button_LoginPad_Go_RegisterPad")
             {
-                tBoxLoginUsers.Text = pBoxLoginPassword.Password = "";
+                tBoxLoginUsers.Text = pBoxLoginPassword.Password = tBoxLoginIdManager.Text = "";
                 cBLoginIdentity.SelectedIndex = 0;
                 LoginPad.Visibility = Visibility.Collapsed;
                 RegisterPad.Visibility = Visibility.Visible;
             }
             else if ((sender as Button).Name == "Button_Register_Go_LoginPad")
             {
-                tBoxRegisterUsers.Text = pBoxRegisterPassword.Password = pBoxRegisterPasswordAgain.Password = "";
+                tBoxRegisterUsers.Text = pBoxRegisterPassword.Password = pBoxRegisterPasswordAgain.Password = tBoxRegisterIdManager.Text = "";
                 cBRegisterIdentity.SelectedIndex = 0;
-                //CheckBox_Register_ReadRule.IsChecked = false;
+                CheckBox_Register_ReadRule.IsChecked = false;
                 Button_Register.IsEnabled = false;
                 LoginPad.Visibility = Visibility.Visible;
                 RegisterPad.Visibility = Visibility.Collapsed;
@@ -698,8 +710,23 @@ namespace WpfApp2Practice1
         {
             if (sumRegisterOK[0] && sumRegisterOK[1] && sumRegisterOK[2])
             {
-                dicAccount.Add(tBoxRegisterUsers.Text, new Account(tBoxRegisterUsers.Text, pBoxRegisterPassword.Password, cBRegisterIdentity.SelectedIndex == 0 ? Identity.teacher : Identity.student));
-                dicAccount[tBoxRegisterUsers.Text].VerifyUser(pBoxRegisterPassword.Password, Identity.teacher);
+                if(tBoxRegisterIdManager.Text.Length != 8)
+                {
+                    MessageBox.Show("ID管理码不符合规则，请重新设定");
+                    return;
+                }
+                else if(cBRegisterIdentity.SelectedIndex == 0)
+                {
+                    foreach (var temp in dicAccount)
+                    {
+                        if (temp.Value.Identity == Identity.teacher && temp.Value.IdManager == tBoxRegisterIdManager.Text)
+                        {
+                            MessageBox.Show("管理码-老师具有唯一性");
+                            return;
+                        }
+                    }
+                }
+                dicAccount.Add(tBoxRegisterUsers.Text, new Account(tBoxRegisterUsers.Text, pBoxRegisterPassword.Password, cBRegisterIdentity.SelectedIndex == 0 ? Identity.teacher : Identity.student, tBoxRegisterIdManager.Text));
 
                 using (FileStream write = new FileStream("student_Score_Manager_Accounts_List.xml", FileMode.Create))
                 {
@@ -806,5 +833,24 @@ namespace WpfApp2Practice1
                 MessageBox.Show("获取失败，请检查账号正确性或是非老师账号");
         }
 
+        #region SQL管理
+        private void Button_Update_SqlServer_Click(object sender, RoutedEventArgs e)
+        {
+            //先检测数据的正确性，然后再同步到重要数据库
+            //已知BUG：当删除数据时，数据库没法同步 修改方法使用%进行编号补全查找，当students中查找出temp中没有的项就删除
+            SQLServerBase sQLServerBase = new SQLServerBase();
+            System.Data.SqlClient.SqlConnection connection = sQLServerBase.Update_SqlServer_Initialize();
+            foreach (var item in studentsList)
+            {
+                sQLServerBase.Update_SqlServer_Insert(connection, item, currentAccount.IdManager);
+            }
+            sQLServerBase.Update_SqlServer_Join(connection);
+            connection.Close();
+            TB_SQLServerPad_InsertRowCount.Text = sQLServerBase.insertRowCount.ToString();
+            TB_SQLServerPad_UpdateRowCount.Text = sQLServerBase.updateRowCount.ToString();
+            TB_SQLServerPad_OriginRowCount.Text = (studentsList.Count - sQLServerBase.insertRowCount - sQLServerBase.updateRowCount).ToString() + " / " + studentsList.Count.ToString();
+            SQLServerPad_ShowChangeRow.Visibility = Visibility.Visible;
+        }
+        #endregion
     }
 }

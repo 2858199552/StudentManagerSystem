@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         x:Name="window"
         xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
-        Title="学生成绩管理系统" Height="540" Width="960" Icon="/WpfApp2Practice1;component/Image/science.jpg" ContentRendered="Window_ContentRendered">
+        Title="学生成绩管理系统" Height="570" Width="960" Icon="/WpfApp2Practice1;component/Image/science.jpg" ContentRendered="Window_ContentRendered">
     <Window.Resources>
         <CollectionViewSource Source="{Binding ElementName=window, Path=studentsList}" x:Key="studentsListViewSource" Filter="CollectionViewSource_Filter" >
             <CollectionViewSource.SortDescriptions>
@@ -18,9 +18,9 @@
     <Grid>
         <StackPanel Name="LoginPad" Visibility="Visible">
             <TextBlock FontSize="35" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,40">学生成绩管理系统</TextBlock>
-            <Border BorderThickness="2" BorderBrush="AliceBlue" Height="350" Width="450">
+            <Border BorderThickness="2" BorderBrush="AliceBlue" Height="400" Width="450">
                 <StackPanel>
-                    <TextBlock FontSize="25" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,30,0,0">登陆</TextBlock>
+                    <TextBlock FontSize="25" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,0">登陆</TextBlock>
                     <Label FontSize="16">身份：</Label>
                     <ComboBox Name="cBLoginIdentity" MaxWidth="120" SelectionChanged="CBLogin_SelectionChanged">
                         <ComboBoxItem IsSelected="True">
@@ -36,6 +36,8 @@
                             </StackPanel>
                         </ComboBoxItem>
                     </ComboBox>
+                    <Label FontSize="16">ID管理码：</Label>
+                    <TextBox Name="tBoxLoginIdManager" MaxWidth="120"/>
                     <Label FontSize="16">用户名：</Label>
                     <TextBox Name="tBoxLoginUsers" MaxWidth="120"/>
                     <Label FontSize="16">密码：</Label>
@@ -55,7 +57,7 @@
         </StackPanel>
         <StackPanel Name="RegisterPad" Visibility="Collapsed">
             <TextBlock FontSize="35" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,40">学生成绩管理系统</TextBlock>
-            <Border BorderThickness="2" BorderBrush="AliceBlue" Height="380" Width="500">
+            <Border BorderThickness="2" BorderBrush="AliceBlue" Height="400" Width="500">
                 <StackPanel>
                     <TextBlock FontSize="25" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,30,0,0">注册</TextBlock>
                     <StackPanel Orientation="Horizontal" Margin="10">
@@ -74,6 +76,11 @@
                                 </StackPanel>
                             </ComboBoxItem>
                         </ComboBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="10">
+                        <Label FontWeight="Bold" VerticalAlignment="Center">ID管理码：</Label>
+                        <TextBox Name="tBoxRegisterIdManager" Width="120" VerticalAlignment="Center" />
+                        <TextBlock VerticalAlignment="Center">由数字或字母组成，长度为8（学校编码（默认###1）+ 班级（初一四班0704））</TextBlock>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="10">
                         <Label FontWeight="Bold" VerticalAlignment="Center">用户名：</Label>
@@ -414,6 +421,14 @@
                             <TextBlock FontWeight="Bold" FontSize="14">获取成绩单</TextBlock>
                         </MenuItem.ToolTip>
                     </MenuItem>
+                    <MenuItem Header="_SQL Server" Click="Top_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/WpfApp2Practice1;component/Image/dataBase.jpg" />
+                        </MenuItem.Icon>
+                        <MenuItem.ToolTip>
+                            <TextBlock FontWeight="Bold" FontSize="14">数据库管理</TextBlock>
+                        </MenuItem.ToolTip>
+                    </MenuItem>
                 </MenuItem>
             </Menu>
             <StatusBar DockPanel.Dock="Bottom">
@@ -737,6 +752,35 @@
                     </Border>
                 </Grid>
                 <Button Margin="10" Width="120" Height="30" Background="White" Click="Button_Options_Click">确认</Button>
+                <Button Width="100" Background="White" Click="Pad_Button_Return_Click">返回</Button>
+            </StackPanel>
+        </Border>
+        <Border Name="SQLServerPad" Width="450" Height="780" BorderBrush="AliceBlue" BorderThickness="2" Background="White" Visibility="Collapsed" Panel.ZIndex="2">
+            <StackPanel>
+                <Label>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/WpfApp2Practice1;component/Image/dataBase.jpg" Width="16" Height="16" Margin="10,0"/>
+                        <TextBlock>数据库管理</TextBlock>
+                    </StackPanel>
+                </Label>
+                <TextBlock TextWrapping="Wrap" Margin="10,10,30,50">注意：使用该服务前，请确保已经在本地部署完成了Microsoft SQL Server，否则将出现错误！</TextBlock>
+                <Button Margin="10" Width="120" Height="30" Background="White" Click="Button_Update_SqlServer_Click">上传数据</Button>
+                <Border Name="SQLServerPad_ShowChangeRow" Width="400" Height="300" BorderBrush="LightPink" BorderThickness="2" Background="White" Visibility="Collapsed" Margin="10">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label VerticalAlignment="Center">插入行数：</Label>
+                            <TextBlock Name="TB_SQLServerPad_InsertRowCount" VerticalAlignment="Center" Margin="10,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label VerticalAlignment="Center">修改行数：</Label>
+                            <TextBlock Name="TB_SQLServerPad_UpdateRowCount" VerticalAlignment="Center" Margin="10,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label VerticalAlignment="Center">重合率：</Label>
+                            <TextBlock Name="TB_SQLServerPad_OriginRowCount" VerticalAlignment="Center" Margin="10,0"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
                 <Button Width="100" Background="White" Click="Pad_Button_Return_Click">返回</Button>
             </StackPanel>
         </Border>
